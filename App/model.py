@@ -50,7 +50,7 @@ def newAnalyzer():
                 'dateIndex': None
                 }
 
-    analyzer['crimes'] = lt.newList('SINGLE_LINKED', compareIds)
+    analyzer['accidents'] = lt.newList('SINGLE_LINKED', compareIds)
     analyzer['dateIndex'] = om.newMap(omaptype='BST',
                                       comparefunction=compareDates)
     return analyzer
@@ -59,7 +59,7 @@ def newAnalyzer():
 # Funciones para agregar informacion al catalogo
 def addAccident(analyzer, accident):
     """
-    
+
     """
     lt.addLast(analyzer['accidents'], accident)
     updateDateIndex(analyzer['dateIndex'], accident)
@@ -73,3 +73,25 @@ def addAccident(analyzer, accident):
 # ==============================
 # Funciones de Comparacion
 # ==============================
+
+def compareIds(id1, id2):
+    """
+    Compara dos accidentes
+    """
+    if (id1 == id2):
+        return 0
+    elif id1 > id2:
+        return 1
+    else:
+        return -1
+def compareDates(date1, date2):
+    """
+    Compara dos ids de libros, id es un identificador
+    y entry una pareja llave-valor
+    """
+    if (date1 == date2):
+        return 0
+    elif (date1 > date2):
+        return 1
+    else:
+        return -1
