@@ -70,10 +70,10 @@ while True:
         cont = controller.init()
 
     elif int(inputs[0]) == 2:
-        print("\nCargando información de crimenes ....")
+        print("\nCargando información de accidentes ....")
 
     elif int(inputs[0]) == 3:
-        print("\nBuscando crimenes en un rango de fechas: ")
+        print("\nBuscando accidentes en un rango de fechas: ")
 
 
     elif int(inputs[0]) == 4:
