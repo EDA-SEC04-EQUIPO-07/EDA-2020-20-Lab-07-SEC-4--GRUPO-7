@@ -65,3 +65,10 @@ def loadData(analyzer, accidentsfile):
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
+
+def findBydate(analyzer, date):
+    """
+    Busca todas los accidentes que ocurrieron antes de una fecha.
+    """
+    map=analyzer['dateIndex']
+    return model.findBydate(map, key)

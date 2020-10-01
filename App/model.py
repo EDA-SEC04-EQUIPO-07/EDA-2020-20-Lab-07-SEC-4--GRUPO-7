@@ -121,6 +121,14 @@ def newIdIndex(accident):
 # Funciones de consulta
 # ==============================
 
+def findBydate(map, key):
+    """
+    Busca los accidentes menores que una fecha.
+    """
+    minkey=om.minKey(map)
+    rank=om.keys(map, minkey, key)
+    return rank
+
 
 # ==============================
 # Funciones de Comparacion

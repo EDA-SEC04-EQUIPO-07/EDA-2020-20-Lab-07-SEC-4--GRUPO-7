@@ -73,7 +73,11 @@ while True:
         cont=controller.loadData(cont, file)
 
     elif int(inputs[0]) == 3:
-        print("\nBuscando crimenes en un rango de fechas: ")
+        print("\nBuscando crimenes en un rango de fechas:\n>")
+        print('\nRecuerde formato YYYY-mm-dd HH:MM:SS')
+        date_row=input('\nIngrese la fecha con la que desea investigar:\n>')
+        ans=controller.findBydate(cont, date_row)
+        print(ans)
 
 
     elif int(inputs[0]) == 4:
