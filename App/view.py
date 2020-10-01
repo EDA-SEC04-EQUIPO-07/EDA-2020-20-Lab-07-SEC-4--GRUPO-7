@@ -74,12 +74,6 @@ while True:
         cont = controller.init()
 
     elif int(inputs[0]) == 2:
-<<<<<<< HEAD
-        print("\nCargando información de accidentes ....")
-
-    elif int(inputs[0]) == 3:
-        print("\nBuscando accidentes en un rango de fechas: ")
-=======
         print("\nCargando información de crimenes ....")
         cont=controller.loadData(cont, file)
 
@@ -89,7 +83,6 @@ while True:
         date_row=input('\nIngrese la fecha con la que desea investigar:\n>')
         ans=controller.findBydate(cont, date_row)
         print(ans)
->>>>>>> fw.garcia
 
 
     elif int(inputs[0]) == 4:
