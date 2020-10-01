@@ -37,95 +37,167 @@ es decir contiene los modelos con los datos en memoria
 # -----------------------------------------------------
 # API del TAD Catalogo de accidentes
 # -----------------------------------------------------
-def newAnalyzer():
-    """ Inicializa el analizador
-
-    Crea una lista vacia para guardar todos los accidentes
-    Se crean indices (Maps) por los siguientes criterios:
-    -Fechas
-
-    Retorna el analizador inicializado.
+def newAnalaizer():
     """
-    analyzer = {'accidents': None,
-                'dateIndex': None
-                }
+    Inicia un nuevo analizador.
+    
+    Inicia un nuevo analizador.
+    El analizador esta compuesto inicialmente por: 
+        -Un ordered map que tiene por llaves las fechas en la que ocurrieron los crimenes.
+        -Un ordered map que por llaves tiene las latitudes y longitudes en las que ocurrieron los crimenes.
+        -Una lista de crimenes vacia.
+    """
+    analyzer={'lstcrimes': None, 'dateIndex': None, 'coordinatesIndex': None}
 
-    analyzer['accidents'] = lt.newList('SINGLE_LINKED', compareIds)
-    analyzer['dateIndex'] = om.newMap(omaptype='BST',
-                                      comparefunction=compareDates)
-    return analyzer
+    analyzer['lstaccident']=lt.newList(datastructure='SINGLE_LINKED',cmpfunction=cmpIDs )
+    
+    analyzer['dateIndex']=om.newMap(omaptype='RBT',
+                                    comparefunction=cmpDates)
+    #analyzer['coordinateIndex']=om.newMap(omaptype='RBT',
+                                    #comparefunction= cmpCoordinates)
 
-
+# ==============================
 # Funciones para agregar informacion al catalogo
+# ==============================
+
 def addAccident(analyzer, accident):
     """
-
+    Agrega un accidente al mapa de accidentes.
     """
-    lt.addLast(analyzer['accidents'], accident)
-    updateDateIndex(analyzer['dateIndex'], accident)
-    return analyzer
+    lt.addLast(analyzer['lstcrimes'], accident)
+    addNewDate(analyzer, accident)
 
-def updateDateIndex(map, accident):
+def addNewDate(analyzer, accident):
     """
-    Se toma la fecha del accidente y se busca si ya existe en el arbol
-    dicha fecha.  Si es asi, se adiciona a su lista de accidentes
-    y se actualiza el indice de tipos de accidentes.
-
-    Si no se encuentra creado un nodo para esa fecha en el arbol
-    se crea y se actualiza el indice de tipos de accidentes
+    Agrega un fecha al mapa de fechas.
     """
-    occurreddate = accident['Start_Time']
-    accidentdate = datetime.datetime.strptime(occurreddate, '%Y-%m-%d %H:%M:%S')
-    entry = om.get(map, accidentdate.date())
+    dates=analyzer['dateIndex']
+    date_row=accident['start_time']
+    date=datetime.datetime.strptime(date_row, '%Y-%m-%d %H:%M:%S')
+    entry=om.get(dates, date.date())
     if entry is None:
-        datentry = newDataEntry(accidentdate)
-        om.put(map, accidentdate.date(), datentry)
+        value=newDateIndex()
+        om.put(dates, date.date(), value)
     else:
-        datentry = me.getValue(entry)
-    addDateIndex(datentry, accident)
-    return map
-
-
-def newDataEntry(crime):
+        value=me.getValue(entry)
+    addIdIndex(value['idIndex'], accident)
+    
+def addIdIndex(map, accident):
     """
-    Crea una entrada en el indice por fechas, es decir en el arbol
-    binario.
+    Agrega informacion al mapa de Ids.
     """
-    entry = {'offenseIndex': None, 'lstaccidents': None}
-    entry['offenseIndex'] = m.newMap(numelements=30,
-                                     maptype='PROBING',
-                                     comparefunction=compareOffenses)
-    entry['lstaccidents'] = lt.newList('SINGLE_LINKED', compareDates)
+    id=accident['ID']
+    value=newIdIndex(accident)
+    m.put(map, id, value)
+
+# ==============================
+# Creacion de entradas
+# ==============================
+
+def newDateIndex():
+    """
+    Crea la primera capa de informacion en el analyzador.
+    """
+    entry={'lstaccident': None, 'idIndex':None}
+
+    entry['lstaccident']=lt.newList(datastructure='SINGLE_LINKED', cmpfunction=cmpDates)
+    entry['idIndex']=m.newMap(numelements=350000,
+                            maptype='PROBING',
+                            loadfactor=0.4, 
+                            comparefunction=cmpIDs)
     return entry
 
+def newIdIndex(accident):
+    """
+    Crea la entrada de Index.
+    """
+    entry={'id':None, 'accident':None}
+
+    entry['id']=accident['ID']
+    entry['accident']=accident
+    return entry
 
 # ==============================
 # Funciones de consulta
 # ==============================
+
+def findBydate(map, key):
+    """
+    Busca los accidentes menores que una fecha.
+    """
+    minkey=om.minKey(map)
+    rank=om.keys(map, minkey, key)
+    return rank
 
 
 # ==============================
 # Funciones de Comparacion
 # ==============================
 
-def compareIds(id1, id2):
+def cmpIDs(id1,id2):
     """
-    Compara dos accidentes
+    Compara los IDS de dos crimenes.
     """
-    if (id1 == id2):
+    id1=float(id1)
+    id2=float(id2)
+    if id1 == id2:
         return 0
     elif id1 > id2:
         return 1
     else:
         return -1
-def compareDates(date1, date2):
+
+date='YYYY-MM-DD HH:mm:ss'
+print(date[:4])
+print(date[5:7])
+print(date[8:10])
+print(date[11:13])
+print(date[14:16])
+print(date[17:])
+
+def cmpDates(date1, date2):
     """
-    Compara dos ids de libros, id es un identificador
-    y entry una pareja llave-valor
+    Compara la fecha de dos crimenes.
     """
-    if (date1 == date2):
+    if int(date1[:4]) > int(date2[:4]):
+        return 1
+    elif int(date1[:4]) == int(date2[:4]) :
+        if int(date1[5:7]) > int(date2[5:7]):
+            return 1
+        elif int(date1[5:7]) == int(date2[5:7]):
+            if int(date1[8:10]) > int(date2[8:10]):
+                return 1
+            elif int(date1[8:10]) == int(date2[8:10]):
+                if int(date1[11:13]) > int(date2[11:13]):
+                    return 1
+                elif int(date1[11:13]) == int(date2[11:13]):
+                    if int(date1[14:16]) > int(date2[14:16]):
+                        return 1
+                    elif int(date1[14:16]) == int(date2[14:16]):
+                        if int(date[17:]) > int(date[17:]):
+                            return 1
+                        elif int(date1[17:]) == int(date2[17:]):
+                            return 0
+                        else:
+                            return -1
+                    else:
+                        return -1
+                else:
+                    return -1
+            else:
+                return -1
+        else:
+            return -1
+    else:
+        return -1 
+
+def cmpCoordinates(coordinate1, coordinate2):
+    """
+    Compara las coordenadas de dos crimenes
+    """
+    if coordinate1 == coordinate2:
         return 0
-    elif (date1 > date2):
+    elif coordinate1 > coordinate2:
         return 1
     else:
         return -1

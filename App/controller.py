@@ -42,9 +42,14 @@ def init():
     """
     Llama la funcion de inicializacion del modelo.
     """
+<<<<<<< HEAD
     analyzer = model.newAnalyzer()
     return analyzer
 
+=======
+    analyzer=model.newAnalaizer
+    return analyzer
+>>>>>>> fw.garcia
 
 
 # ___________________________________________________
@@ -56,14 +61,29 @@ def loadData(analyzer, accidentsfile):
     """
     Carga los datos de los archivos CSV en el modelo
     """
+<<<<<<< HEAD
     accidentsfile = cf.data_dir + accidentsfile
     input_file = csv.DictReader(open(accidentsfile, encoding="utf-8"),
                                 delimiter=",")
     for accident in input_file:
         model.addCrime(analyzer, accident)
+=======
+    accidentfile = cf.data_dir + accidentsfile
+    input_file = csv.DictReader(open(accidentfile, encoding="utf-8"),
+                                delimiter=",")
+    for accident in input_file:
+        model.addAccident(analyzer, accident)
+>>>>>>> fw.garcia
     return analyzer
 
 
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
+
+def findBydate(analyzer, date):
+    """
+    Busca todas los accidentes que ocurrieron antes de una fecha.
+    """
+    map=analyzer['dateIndex']
+    return model.findBydate(map, key)

@@ -37,8 +37,12 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
+<<<<<<< HEAD
 
 accidentsfile = 'us_accidents_small.csv'
+=======
+file='data\us_accidents_small.csv'
+>>>>>>> fw.garcia
 
 # ___________________________________________________
 #  Menu principal
@@ -70,10 +74,22 @@ while True:
         cont = controller.init()
 
     elif int(inputs[0]) == 2:
+<<<<<<< HEAD
         print("\nCargando información de accidentes ....")
 
     elif int(inputs[0]) == 3:
         print("\nBuscando accidentes en un rango de fechas: ")
+=======
+        print("\nCargando información de crimenes ....")
+        cont=controller.loadData(cont, file)
+
+    elif int(inputs[0]) == 3:
+        print("\nBuscando crimenes en un rango de fechas:\n>")
+        print('\nRecuerde formato YYYY-mm-dd HH:MM:SS')
+        date_row=input('\nIngrese la fecha con la que desea investigar:\n>')
+        ans=controller.findBydate(cont, date_row)
+        print(ans)
+>>>>>>> fw.garcia
 
 
     elif int(inputs[0]) == 4:
