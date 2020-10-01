@@ -37,12 +37,7 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-<<<<<<< HEAD
-
-accidentsfile = 'us_accidents_small.csv'
-=======
 file='data\us_accidents_small.csv'
->>>>>>> fw.garcia
 
 # ___________________________________________________
 #  Menu principal
