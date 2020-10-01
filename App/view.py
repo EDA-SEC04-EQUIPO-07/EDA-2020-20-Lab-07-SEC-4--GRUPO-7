@@ -22,6 +22,7 @@
 
 import sys
 import config
+from DISClib.ADT import list as lt
 from App import controller
 assert config
 
@@ -36,10 +37,12 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-crimefile = 'crime-utf8.csv'
-accidentsfile = 'us_accidents_small.csv'
-file='data\\us_accidents_small.csv'
+<<<<<<< HEAD
 
+accidentsfile = 'us_accidents_small.csv'
+=======
+file='data\us_accidents_small.csv'
+>>>>>>> fw.garcia
 
 # ___________________________________________________
 #  Menu principal
@@ -72,9 +75,15 @@ while True:
 
     elif int(inputs[0]) == 2:
         print("\nCargando información de crimenes ....")
+        cont=controller.loadData(cont, file)
 
     elif int(inputs[0]) == 3:
-        print("\nBuscando crimenes en un rango de fechas: ")
+        print("\nBuscando crimenes en un rango de fechas:\n>")
+        print('\nRecuerde formato YYYY-mm-dd HH:MM:SS')
+        date_row=input('\nIngrese la fecha con la que desea investigar:\n>')
+        ans=controller.findBydate(cont, date_row)
+        print(ans)
+
 
     elif int(inputs[0]) == 4:
         print("\nRequerimiento No 1 del reto 3: ")
