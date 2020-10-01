@@ -36,14 +36,10 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-<<<<<<< Updated upstream
-
 crimefile = 'crime-utf8.csv'
-=======
 accidentsfile = 'us_accidents_small.csv'
-
 file='data\us_accidents_small.csv'
->>>>>>> Stashed changes
+
 
 # ___________________________________________________
 #  Menu principal
