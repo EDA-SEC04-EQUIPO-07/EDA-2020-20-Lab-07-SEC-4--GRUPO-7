@@ -37,8 +37,7 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-
-crimefile = 'crime-utf8.csv'
+file='data\us_accidents_small.csv'
 
 # ___________________________________________________
 #  Menu principal
@@ -71,6 +70,7 @@ while True:
 
     elif int(inputs[0]) == 2:
         print("\nCargando información de crimenes ....")
+        cont=controller.loadData(cont, file)
 
     elif int(inputs[0]) == 3:
         print("\nBuscando crimenes en un rango de fechas: ")
