@@ -48,7 +48,7 @@ def newAnalaizer():
         -Un ordered map que por llaves tiene las latitudes y longitudes en las que ocurrieron los crimenes.
         -Una lista de crimenes vacia.
     """
-    analyzer={'lstcrimes': None, 'dateIndex': None, 'coordinatesIndex': None}
+    analyzer={'lstaccident': None, 'dateIndex': None, 'coordinatesIndex': None}
 
     analyzer['lstaccident']=lt.newList(datastructure='SINGLE_LINKED',cmpfunction=cmpIDs )
     
@@ -65,7 +65,7 @@ def addAccident(analyzer, accident):
     """
     Agrega un accidente al mapa de accidentes.
     """
-    lt.addLast(analyzer['lstcrimes'], accident)
+    lt.addLast(analyzer['lstaccident'], accident)
     addNewDate(analyzer, accident)
 
 def addNewDate(analyzer, accident):

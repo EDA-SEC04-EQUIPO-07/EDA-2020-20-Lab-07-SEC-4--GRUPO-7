@@ -39,7 +39,7 @@ operación seleccionada.
 
 accidentsfile = 'us_accidents_small.csv'
 
-file='\data\us_accidents_small.csv'
+file='us_accidents_small.csv'
 
 
 # ___________________________________________________
