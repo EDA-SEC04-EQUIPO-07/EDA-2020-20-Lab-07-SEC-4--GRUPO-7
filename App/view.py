@@ -37,7 +37,7 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-file='data\us_accidents_small.csv'
+file='\\us_accidents_small.csv'
 
 # ___________________________________________________
 #  Menu principal
@@ -69,11 +69,16 @@ while True:
         cont = controller.init()
 
     elif int(inputs[0]) == 2:
-        print("\nCargando información de crimenes ....")
-        cont=controller.loadData(cont, file)
+        print("\nCargando información de accidentes ....")
+        controller.loadData(cont, file)
+        (high,nodes,min_key,max_key)=controller.infAnalyzer(cont)
+        print('\nLa altura del arbol cargado es igual a: ', str(high))
+        print('\nLa cantidad de nodos de arbol son: ', str(nodes))
+        print('\nLa primera fecha registrada es: ', str(min_key))
+        print('\nLa ultima fecha registrada es: ', str(max_key))
 
     elif int(inputs[0]) == 3:
-        print("\nBuscando crimenes en un rango de fechas:\n>")
+        print("\nBuscando accidentes en un rango de fechas:\n>")
         print('\nRecuerde formato YYYY-mm-dd HH:MM:SS')
         date_row=input('\nIngrese la fecha con la que desea investigar:\n>')
         ans=controller.findBydate(cont, date_row)
