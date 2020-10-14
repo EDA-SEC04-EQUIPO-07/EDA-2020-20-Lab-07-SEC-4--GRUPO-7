@@ -83,7 +83,7 @@ def addNewDate(analyzer, accident):
     else:
         value=me.getValue(entry)
     addIdIndex(value['idIndex'], accident)
-    
+  
 def addIdIndex(map, accident):
     """
     Agrega informacion al mapa de Ids.
@@ -139,6 +139,8 @@ def cmpIDs(id1,id2):
     """
     Compara los IDS de dos crimenes.
     """
+    print(id1)
+    print(id2)
     if id1 < id2:
         return -1
     elif id1 == id2:
