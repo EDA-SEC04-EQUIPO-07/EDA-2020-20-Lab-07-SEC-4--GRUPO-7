@@ -24,6 +24,7 @@ import config as cf
 from App import model
 import datetime
 import csv
+from DISClib.ADT import orderedmap as om
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -42,7 +43,7 @@ def init():
     """
     Llama la funcion de inicializacion del modelo.
     """
-    analyzer=model.newAnalaizer
+    analyzer=model.newAnalaizer()
     return analyzer
 
 
@@ -66,9 +67,19 @@ def loadData(analyzer, accidentsfile):
 #  Funciones para consultas
 # ___________________________________________________
 
+def infAnalyzer(analyzer):
+    """
+    Dado un analizador retorna informacion sobre este.
+    """
+    high=om.height(analyzer['lstaccident'])
+    nodes=om.size(analyzer['lstaccident'])
+    min_key=om.minKey(analyzer['lstaccident'])
+    max_key=om.maxKey(analyzer['lstaccident'])
+    return (high,nodes,min_key,max_key)
+
 def findBydate(analyzer, date):
     """
     Busca todas los accidentes que ocurrieron antes de una fecha.
     """
-    map=analyzer['dateIndex']
-    return model.findBydate(map, key)
+    mp=analyzer['dateIndex']
+    return model.findBydate(mp, date)
