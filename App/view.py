@@ -25,6 +25,7 @@ import config
 from DISClib.ADT import list as lt
 from App import controller
 assert config
+sys.setrecursionlimit(10000)
 
 """
 La vista se encarga de la interacción con el usuario.
@@ -71,6 +72,7 @@ while True:
     elif int(inputs[0]) == 2:
         print("\nCargando información de accidentes ....")
         controller.loadData(cont, file)
+        print(cont)
         (high,nodes,min_key,max_key)=controller.infAnalyzer(cont)
         print('\nLa altura del arbol cargado es igual a: ', str(high))
         print('\nLa cantidad de nodos de arbol son: ', str(nodes))

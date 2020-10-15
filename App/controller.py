@@ -72,10 +72,10 @@ def infAnalyzer(analyzer):
     """
     Dado un analizador retorna informacion sobre este.
     """
-    high=om.height(analyzer['lstaccident'])
-    nodes=om.size(analyzer['lstaccident'])
-    min_key=om.minKey(analyzer['lstaccident'])
-    max_key=om.maxKey(analyzer['lstaccident'])
+    high=om.height(analyzer['dateIndex'])
+    nodes=om.size(analyzer['dateIndex'])
+    min_key=om.minKey(analyzer['dateIndex'])
+    max_key=om.maxKey(analyzer['dateIndex'])
     return (high,nodes,min_key,max_key)
 
 def findBydate(analyzer, date):
