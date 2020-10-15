@@ -72,7 +72,6 @@ while True:
     elif int(inputs[0]) == 2:
         print("\nCargando información de accidentes ....")
         controller.loadData(cont, file)
-        print(cont)
         (high,nodes,min_key,max_key)=controller.infAnalyzer(cont)
         print('\nLa altura del arbol cargado es igual a: ', str(high))
         print('\nLa cantidad de nodos de arbol son: ', str(nodes))
