@@ -105,7 +105,7 @@ def newDateIndex():
     entry={'lstaccident': None, 'idIndex':None}
 
     entry['lstaccident']=lt.newList(datastructure='SINGLE_LINKED', cmpfunction=cmpDates)
-    entry['idIndex']=m.newMap(numelements=350000,
+    entry['idIndex']=m.newMap(numelements=49,
                             maptype='PROBING',
                             loadfactor=0.4, 
                             comparefunction=cmpIDs)
@@ -137,7 +137,7 @@ def findBydate(map, key):
         llave= it.next(iterator)
         lista1=om.get(map,key)
         lista2=me.getValue(lista1)
-        total_accidentes+=lista2["lstaccident"]["size"]
+    print(lista2)
         
     
 
@@ -162,12 +162,16 @@ def cmpIDs(id1,id2):
     """
     print(id1)
     print(id2)
-    if id1 < id2:
-        return -1
-    elif id1 == id2:
+    id1=str(id1)
+    id2=str(id2)
+    if (id1 == id2):
         return 0
-    else:
+    elif id1 > id2:
         return 1
+    else:
+        return -1
+
+
 
 def cmpDates(date1, date2):
     """
