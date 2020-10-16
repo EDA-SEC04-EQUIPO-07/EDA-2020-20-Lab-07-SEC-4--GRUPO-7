@@ -42,6 +42,8 @@ operación seleccionada.
 
 file='\\us_accidents_small.csv'
 
+file_heavy='\\US_Accidents_June20.csv'
+
 # ___________________________________________________
 #  Funciones de impresion
 # ___________________________________________________
@@ -67,13 +69,13 @@ def printMenu():
     print("\n")
     print("*******************************************")
     print('Bienvenido')
-    print('1- Inicializar Analizador')
-    print('2- Cargar información de accidentes')
-    print('3- Conocer los accidentes en una fecha')
-    print('4- Buscando accidentes anteriores a una fecha')
+    print('1- Inicializar Analizador.')
+    print('2- Cargar información de accidentes.')
+    print('3- Conocer los accidentes en una fecha.')
+    print('4- Buscando accidentes anteriores a una fecha.')
     print('5- req 3')
     print('6- req 4')
-    print('7- req 5')
+    print('7- Busca Todos los accidentes que ocurrieron en cierto rango de horas.')
     print('8- req 6')
     print('0- Salir')
     print("*******************************************")
@@ -86,21 +88,23 @@ while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n>')
 
-    if inputs[0] == '1':
+    if inputs == '1':
         print("\nInicializando....")
         # cont es el controlador que se usará de acá en adelante
         cont = controller.init()
 
-    elif inputs[0] == '2':
+    elif inputs == '2':
         print("\nCargando información de accidentes ....")
         controller.loadData(cont, file)
+        print(file_heavy)
         (high,nodes,min_key,max_key)=controller.infAnalyzer(cont)
         print('\nLa altura del arbol cargado es igual a: ', str(high))
         print('\nLa cantidad de nodos de arbol son: ', str(nodes))
         print('\nLa primera fecha registrada es: ', str(min_key))
         print('\nLa ultima fecha registrada es: ', str(max_key))
+        print('\nLa cantidad de accidentes reportados fue: ', str(cont['Number']),'.')
         
-    elif inputs[0] == '3' :
+    elif inputs == '3' :
         print('\nRecuerde el formato YYYY-mm-dd')
         date_row=input('\nIngrese la fecha con la que desea investigar:\n>')
         try:
@@ -118,7 +122,7 @@ while True:
                 print('\nLa cantidad de accidentes reportados para ese día fue de: ', str(size),'.\n')
                 printlist1(lst)
 
-    elif inputs[0] == '4':
+    elif inputs == '4':
         print('\nRecuerde formato YYYY-mm-dd')
         date_row=input('\nIngrese la fecha con la que desea investigar:\n>')
         try:
@@ -139,21 +143,39 @@ while True:
                 print('\nLa fecha con más accidentes registrados fue: ', str(date), 
                 'con un total de : ', str(accidents), 'acidentes.')
 
-    elif inputs[0] == '5':
+    elif inputs == '5':
         print(None)
     
-    elif inputs[0] == '6':
+    elif inputs == '6':
         print(None)
 
-    elif inputs[0] == '7':
+    elif inputs == '7':
+        print('\nRecuerde el formato para las horas HH:MM:ss')
+        hour1_row=input('\nIngrese la hora menor:\n>')
+        hour2_row=input('\nIngrese la hora mayot:\n>')
+        try:
+            hour1=datetime.datetime.strptime(hour1_row, '%H:%M:%S')
+            hour2=datetime.datetime.strptime(hour2_row, '%H:%M:%S')
+        except:
+            hour1=None
+            hour2=None
+        if hour1 is None or hour2 is None:
+            print('\nEl formato de las horas no es correcto.')
+        else:
+            ans=controller.RangeHour(cont, hour1.time(), hour2.time())
+            if ans is None:
+                print('\nRango de horas incorrecto')
+            else:
+                (lst, size)=ans
+                print('\nLos accidentes ocurridos en esas horas fueron: ', str(size), '.')
+                printlist1(lst)
+
+    elif inputs == '8':
         print(None)
 
-    elif inputs[0] == '8':
-        print(None)
-
-    elif inputs[0] == '0':
+    elif inputs == '0':
         sys.exit(0)
-        
+
     else:
         print('\nOpcion no valida.')
 
