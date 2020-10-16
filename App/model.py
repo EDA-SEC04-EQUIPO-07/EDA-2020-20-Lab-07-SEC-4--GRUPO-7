@@ -84,15 +84,14 @@ def addNewDate(analyzer, accident):
         om.put(dates, date.date(), value)
     else:
         value=me.getValue(entry)
-    addIdIndex(value['idIndex'], accident)
+    addIdIndex(value['hourIndex'], accident, date)
   
-def addIdIndex(map, accident):
+def addIdIndex(map, accident, date):
     """
     Agrega informacion al mapa de Ids.
     """
-    id=accident['ID']
-    value=newIdIndex(accident)
-    m.put(map, id, value)
+    hour=date.time()
+    om.put(map, hour, accident)
 
 # ==============================
 # Creacion de entradas
@@ -102,22 +101,10 @@ def newDateIndex():
     """
     Crea la primera capa de informacion en el analyzador.
     """
-    entry={'lstaccident': None, 'idIndex':None}
+    entry={'lstaccident': None, 'hourIndex':None}
 
     entry['lstaccident']=lt.newList(datastructure='SINGLE_LINKED', cmpfunction=cmpDates)
-    entry['idIndex']=m.newMap(numelements=49,
-                            maptype='PROBING',
-                            loadfactor=0.4, 
-                            comparefunction=cmpIDs)
-    return entry
-
-def newIdIndex(accident):
-    """
-    Crea la entrada de Index.
-    """
-    entry={'id':None, 'accident':None}
-    entry['id']=accident['ID']
-    entry['accident']=accident
+    entry['hourIndex']=om.newMap(omaptype='RBT', comparefunction=cmpDates)
     return entry
 
 # ==============================
@@ -160,8 +147,6 @@ def cmpIDs(id1,id2):
     """
     Compara los IDS de dos crimenes.
     """
-    print(id1)
-    print(id2)
     id1=str(id1)
     id2=str(id2)
     if (id1 == id2):

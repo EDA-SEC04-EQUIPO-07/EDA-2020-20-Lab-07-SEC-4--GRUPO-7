@@ -88,7 +88,7 @@ while True:
 
     elif int(inputs[0]) == 4:
         print("\nBuscando accidentes en un rango de fechas:\n>")
-        print('\nRecuerde formato YYYY-mm-dd HH:MM:SS')
+        print('\nRecuerde formato YYYY-mm-dd')
         date_row=input('\nIngrese la fecha con la que desea investigar:\n>')
         date_row=datetime.datetime.strptime(date_row, '%Y-%m-%d')
         ans=controller.findBydate(cont, date_row.date())
