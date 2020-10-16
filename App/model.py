@@ -80,7 +80,7 @@ def addNewDate(analyzer, accident):
     date=datetime.datetime.strptime(date_row, '%Y-%m-%d %H:%M:%S')
     entry=om.get(dates, date.date())
     if entry is None:
-        value=newDateIndex()
+        value=newDateIndex(date.date())
         om.put(dates, date.date(), value)
     else:
         value=me.getValue(entry)
@@ -104,12 +104,12 @@ def addHourIndex(map, accident, date):
 # Creacion de entradas
 # ==============================
 
-def newDateIndex():
+def newDateIndex(date):
     """
     Crea la primera capa de informacion en el analyzador.
     """
-    entry={'lstaccident': None, 'hourIndex':None}
-
+    entry={'date':None,'lstaccident': None, 'hourIndex':None}
+    entry['date']=date
     entry['lstaccident']=lt.newList(datastructure='SINGLE_LINKED', cmpfunction=cmpDates)
     entry['hourIndex']=om.newMap(omaptype='RBT', comparefunction=cmpDates)
     return entry
@@ -144,21 +144,31 @@ def findBydate(map, key):
     """
     Busca los accidentes menores que una fecha.
     """
-    minkey=om.minKey(map)
-    rank=om.keys(map, minkey, key)
-    iterator= it.newIterator(rank)
-    total_accidentes=0
-    lista2=None
-    while it.hasNext(iterator):
-        llave= it.next(iterator)
-        lista1=om.get(map,key)
-        lista2=me.getValue(lista1)
-    print(lista2)
-        
-    
-
-    return total_accidentes
-
+    try:
+        minkey=om.minKey(map)
+        rank=om.keys(map, minkey, key)
+        iterator1= it.newIterator(rank)
+        buckets=lt.newList(datastructure='SINGLE_LINKED')
+        while it.hasNext(iterator1):
+            key=it.next(iterator1)
+            entry=om.get(map, key)
+            value=me.getValue(entry)
+            lt.addLast(buckets, value)
+        #parte dos 
+        total_accidents=0
+        max_accident={'size':0,'date':None}
+        iterator2=it.newIterator(buckets)
+        while it.hasNext(iterator2):
+            value=it.next(iterator2)
+            lst=value['lstaccident']
+            size=int(lt.size(lst))
+            if size > max_accident['size']:
+                max_accident['size']=size
+                max_accident['date']=value['date']
+            total_accidents=total_accidents+size
+        return(max_accident, total_accidents)
+    except:
+        return None
 
 # ==============================
 # Funciones de Comparacion

@@ -90,8 +90,8 @@ def findByday(analyzer,date):
     Busca todas los accidentes que ocurrieron en una fecha específica, reportando la cantidad de accidentes por severidad para dicha fecha
     """
     mp=analyzer["dateIndex"]
-    (lst, size) = model.findByday(mp,date)
     try:
+        (lst, size) = model.findByday(mp,date)
         mergesort.mergesort(lst, model.cmpSeverity)
         return (lst, size)
     except:

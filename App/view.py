@@ -69,8 +69,8 @@ def printMenu():
     print("Bienvenido")
     print("1- Inicializar Analizador")
     print("2- Cargar información de accidentes")
-    print("3- Requerimento 1")
-    print("4- Requerimento 2")
+    print("3- Conocer los accidentes en una fecha")
+    print("4- Buscando accidentes anteriores a una fecha")
     print("0- Salir")
     print("*******************************************")
 
@@ -97,25 +97,43 @@ while True:
         print('\nLa ultima fecha registrada es: ', str(max_key))
         
     elif int(inputs[0]) == 3:
-        print("\n Conocer los accidentes en una fecha: ")
-        print('\nRecuerde formato YYYY-mm-dd')
+        print('\nRecuerde el formato YYYY-mm-dd')
         date_row=input('\nIngrese la fecha con la que desea investigar:\n>')
-        date=datetime.datetime.strptime(date_row, '%Y-%m-%d')
-        ans=controller.findByday(cont,date.date())
-        if ans is None:
-            print('Llave no valida')
+        try:
+            date=datetime.datetime.strptime(date_row, '%Y-%m-%d')
+        except:
+            date=None
+        if date is None:
+            print('\nEl formato no es correcto.')
         else:
-            (lst, size)= controller.findByday(cont,date.date())
-            print('\nLa cantidad de accidentes reportados para ese día fue de: ', str(size),'.\n')
-            printlist1(lst)
+            ans=controller.findByday(cont,date.date())
+            if ans is None:
+                print('\nLa fecha ingresada no se encuentra dentro del rango de fechas registradas.')
+            else:
+                (lst, size)= controller.findByday(cont,date.date())
+                print('\nLa cantidad de accidentes reportados para ese día fue de: ', str(size),'.\n')
+                printlist1(lst)
 
     elif int(inputs[0]) == 4:
-        print("\nBuscando accidentes en un rango de fechas:\n>")
         print('\nRecuerde formato YYYY-mm-dd')
         date_row=input('\nIngrese la fecha con la que desea investigar:\n>')
-        date=datetime.datetime.strptime(date_row, '%Y-%m-%d')
-        (lst, size)=controller.findBydate(cont, date_row.date())
-        print(None)
+        try:
+            date=datetime.datetime.strptime(date_row, '%Y-%m-%d')
+        except:
+            date=None
+        if date is None:
+            print('\nEl Formato ingresado no es valido.')
+        else:
+            ans=controller.findBydate(cont, date.date())
+            if ans is None:
+                print('\nLa fecha ingresada no se encuentra dentro del rango de fechas registradas.')
+            else:
+                (max_date, size)=ans
+                print('\nLa cantidad de accidentes registrados hasta la fecha es: ', str(size), '.')
+                date=max_date['date']
+                accidents=max_date['size']
+                print('\nLa fecha con más accidentes registrados fue: ', str(date), 
+                'con un total de : ', str(accidents), 'acidentes.')
 
     else:
         sys.exit(0)
