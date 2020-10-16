@@ -21,7 +21,6 @@
  """
 import config
 from DISClib.ADT import list as lt
-from DISClib.DataStructures import listiterator as it
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.DataStructures import linkedlistiterator as it 
@@ -50,7 +49,7 @@ def newAnalaizer():
         -Un ordered map que por llaves tiene las latitudes y longitudes en las que ocurrieron los crimenes.
         -Una lista de crimenes vacia.
     """
-    analyzer={'lstaccident': None, 'dateIndex': None, 'coordinatesIndex': None}
+    analyzer={'lstaccident': None, 'dateIndex': None, 'coordinatesIndex': None, 'Number':0}
 
     analyzer['lstaccident']=lt.newList(datastructure='SINGLE_LINKED',cmpfunction=cmpIDs )
     
@@ -71,6 +70,7 @@ def addAccident(analyzer, accident):
     """
     lt.addLast(analyzer['lstaccident'], accident)
     addNewDate(analyzer, accident)
+    analyzer['Number']+=1
 
 def addNewDate(analyzer, accident):
     """
@@ -146,8 +146,8 @@ def findBydate(map, key):
     Busca los accidentes menores que una fecha.
     """
     try:
-        minkey=om.minKey(map)
-        rank=om.keys(map, minkey, key)
+        min_key=om.minKey(map)
+        rank=om.keys(map, min_key,key)
         iterator1= it.newIterator(rank)
         buckets=lt.newList(datastructure='SINGLE_LINKED')
         while it.hasNext(iterator1):
@@ -171,39 +171,42 @@ def findBydate(map, key):
     except:
         return None
 
-def findByDateRank(map, key1, key2):
+def RangeHours(analyzer, hour1, hour2):
     """
-    Busca los accidentes en un rango de fechas y la categoria de accidentes más reportadas en dicho rango.
+    Dadas dos horas busca la canridad de accidentes que han ocurrido entre esas dos horas.
     """
     try:
-        rank=om.keys(map, key1, key2)
-        iterator1= it.newIterator(rank)
-        buckets=lt.newList(datastructure='SINGLE_LINKED')
+        dateIndex=analyzer['dateIndex']
+        min_key=om.minKey(dateIndex)
+        max_key=om.maxKey(dateIndex)
+        keys_date=om.keys(dateIndex, min_key,max_key)
+        maps=lt.newList(datastructure='SINGLE_LINKED')
+        iterator1=it.newIterator(keys_date)
         while it.hasNext(iterator1):
-            key2=it.next(iterator1)
-            entry=om.get(map, key2)
+            key=it.next(iterator1)
+            entry=om.get(dateIndex,key)
             value=me.getValue(entry)
-            lt.addLast(buckets, value)
-
-        total_accidents=0
-        iterator2=it.newIterator(buckets)
+            mp=value['hourIndex']
+            lt.addLast(maps, mp)
+        #parte2
+        accidents=lt.newList(datastructure='SINGLE_LINKED')
+        iterator2=it.newIterator(maps)
         while it.hasNext(iterator2):
-            value=it.next(iterator2)
-            lst1=value['lstaccident']
-            size=int(lt.size(lst))
-
-        categoria={'size':0,'Severity':None}
-        iterator3=it.newIterator(lst1)
-        while it.hasNext(iterator3):
-            value=it.next(iterator3)
-            lst=value['Severity']
-            size=int(lt.size(lst))
-            if size > categoria['size']:
-                categoria['size']=size
-                cayegoria['Severity']=value['Severity']
-            total_accidents=total_accidents+size
-        return(categoria, total_accidents)
-        
+            mp=it.next(iterator2)
+            keys_hour=om.keys(mp, hour1, hour2)
+            keysiterator=it.newIterator(keys_hour)
+            while it.hasNext(keysiterator):
+                entry=om.get(mp, it.next(keysiterator))
+                value=me.getValue(entry)
+                lst=value['lstaccident']
+                iterator3=it.newIterator(lst)
+                while it.hasNext(iterator3):
+                    accident=it.next(iterator3)
+                    lt.addLast(accidents, accident)
+        size=lt.size(accidents)
+        return (accidents,size)
+    except:
+        return None
 
 # ==============================
 # Funciones de Comparacion

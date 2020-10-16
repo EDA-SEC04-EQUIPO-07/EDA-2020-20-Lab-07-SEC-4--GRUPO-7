@@ -104,3 +104,14 @@ def findByday(analyzer,date):
         return (lst, size)
     except:
         return None
+
+def RangeHour(analyzer, hour1, hour2):
+    """
+    Busca todos los accidentes que ocurrieron en un rago de horas.
+    """
+    try:
+        (lst, size)=model.RangeHours(analyzer, hour1, hour2)
+        mergesort.mergesort(lst, model.cmpSeverity)
+        return (lst, size)
+    except: 
+        return None
