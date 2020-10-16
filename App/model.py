@@ -24,6 +24,8 @@ from DISClib.ADT import list as lt
 from DISClib.DataStructures import listiterator as it
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
+from DISClib.DataStructures import linkedlistiterator as it 
+from DISClib.DataStructures import arraylist as array 
 from DISClib.ADT import map as m
 import datetime
 assert config
@@ -79,58 +81,95 @@ def addNewDate(analyzer, accident):
     date=datetime.datetime.strptime(date_row, '%Y-%m-%d %H:%M:%S')
     entry=om.get(dates, date.date())
     if entry is None:
-        value=newDateIndex()
+        value=newDateIndex(date.date())
         om.put(dates, date.date(), value)
     else:
         value=me.getValue(entry)
-    addIdIndex(value['idIndex'], accident)
+    lt.addLast(value['lstaccident'],accident)
+    addHourIndex(value['hourIndex'], accident, date)
   
-def addIdIndex(map, accident):
+def addHourIndex(map, accident, date):
     """
     Agrega informacion al mapa de Ids.
     """
-    id=accident['ID']
-    value=newIdIndex(accident)
-    m.put(map, id, value)
+    hour=date.time()
+    entry=om.get(map, hour)
+    if entry is None:
+        value=newHourIndex(hour)
+        om.put(map, hour, value)
+    else:
+        value=me.getValue(entry)
+    lt.addLast(value['lstaccident'],accident)
 
 # ==============================
 # Creacion de entradas
 # ==============================
 
-def newDateIndex():
+def newDateIndex(date):
     """
     Crea la primera capa de informacion en el analyzador.
     """
-    entry={'lstaccident': None, 'idIndex':None}
-
+    entry={'date':None,'lstaccident': None, 'hourIndex':None}
+    entry['date']=date
     entry['lstaccident']=lt.newList(datastructure='SINGLE_LINKED', cmpfunction=cmpDates)
-    entry['idIndex']=m.newMap(numelements=350000,
-                            maptype='PROBING',
-                            loadfactor=0.4, 
-                            comparefunction=cmpIDs)
+    entry['hourIndex']=om.newMap(omaptype='RBT', comparefunction=cmpDates)
     return entry
 
-def newIdIndex(accident):
+def newHourIndex(hour):
     """
-    Crea la entrada de Index.
+    Crea un elmento del arbol que organiza los eventos por hora.
     """
-    entry={'id':None, 'accident':None}
-    entry['id']=accident['ID']
-    entry['accident']=accident
+    entry={'hour':None, 'lstaccident':None}
+    entry['hour']=hour
+    entry['lstaccident']=lt.newList(datastructure='SINGLE_LINKED', cmpfunction=cmpDates)
     return entry
 
 # ==============================
 # Funciones de consulta
 # ==============================
 
+def findByday(map,key):
+    """
+    Busca todas los accidentes que ocurrieron en una fecha específica
+    """
+    entry=om.get(map, key)
+    value=me.getValue(entry)
+    try:
+        accidents=value['lstaccident']
+        size=lt.size(accidents)
+        return (accidents,size)
+    except:
+        return None
+
 def findBydate(map, key):
     """
     Busca los accidentes menores que una fecha.
     """
-    minkey=om.minKey(map)
-    rank=om.keys(map, minkey, key)
-    return rank
-
+    try:
+        minkey=om.minKey(map)
+        rank=om.keys(map, minkey, key)
+        iterator1= it.newIterator(rank)
+        buckets=lt.newList(datastructure='SINGLE_LINKED')
+        while it.hasNext(iterator1):
+            key=it.next(iterator1)
+            entry=om.get(map, key)
+            value=me.getValue(entry)
+            lt.addLast(buckets, value)
+        #parte dos 
+        total_accidents=0
+        max_accident={'size':0,'date':None}
+        iterator2=it.newIterator(buckets)
+        while it.hasNext(iterator2):
+            value=it.next(iterator2)
+            lst=value['lstaccident']
+            size=int(lt.size(lst))
+            if size > max_accident['size']:
+                max_accident['size']=size
+                max_accident['date']=value['date']
+            total_accidents=total_accidents+size
+        return(max_accident, total_accidents)
+    except:
+        return None
 
 # ==============================
 # Funciones de Comparacion
@@ -140,14 +179,16 @@ def cmpIDs(id1,id2):
     """
     Compara los IDS de dos crimenes.
     """
-    print(id1)
-    print(id2)
+    id1=str(id1)
+    id2=str(id2)
     if id1 < id2:
         return -1
     elif id1 == id2:
         return 0
     else:
         return 1
+
+
 
 def cmpDates(date1, date2):
     """
@@ -162,7 +203,7 @@ def cmpDates(date1, date2):
 
 def cmpCoordinates(coordinate1, coordinate2):
     """
-    Compara las coordenadas de dos crimenes
+    Compara las coordenadas de dos accidentes
     """
     if coordinate1 < coordinate2:
         return -1
@@ -170,3 +211,15 @@ def cmpCoordinates(coordinate1, coordinate2):
         return 0
     else:
         return 1
+def cmpSeverity(accident1,accident2):
+    """
+    Compara la severidad de dos accidentes
+    """
+    Severity1=accident1['Severity']
+    Severity2=accident2['Severity']
+    if Severity1 > Severity2:
+        return -1
+    elif Severity1 == Severity1:
+        return 0
+    else:
+        return 1   

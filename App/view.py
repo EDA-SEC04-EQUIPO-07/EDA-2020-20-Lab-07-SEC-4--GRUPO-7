@@ -22,9 +22,12 @@
 
 import sys
 import config
+import datetime
 from DISClib.ADT import list as lt
+from DISClib.DataStructures import listiterator as it
 from App import controller
 assert config
+sys.setrecursionlimit(10000)
 
 """
 La vista se encarga de la interacción con el usuario.
@@ -40,6 +43,22 @@ operación seleccionada.
 file='\\us_accidents_small.csv'
 
 # ___________________________________________________
+#  Funciones de impresion
+# ___________________________________________________
+
+def printlist1(lst):
+    """
+    Imprime los elementos de una lista.
+    """
+    iterator=it.newIterator(lst)
+    while it.hasNext(iterator):
+        value=it.next(iterator)
+        id=value['ID']
+        severity=value['Severity']
+        start=value['Start_Time']
+        print('\nEl id del accidente es: ', str(id), ' con severidad de: ', str(severity), ' con hora de inicio: ', str(start) , '.')
+
+# ___________________________________________________
 #  Menu principal
 # ___________________________________________________
 
@@ -50,8 +69,8 @@ def printMenu():
     print("Bienvenido")
     print("1- Inicializar Analizador")
     print("2- Cargar información de accidentes")
-    print("3- Requerimento 1")
-    print("4- Requerimento 2")
+    print("3- Conocer los accidentes en una fecha")
+    print("4- Buscando accidentes anteriores a una fecha")
     print("0- Salir")
     print("*******************************************")
 
@@ -76,17 +95,45 @@ while True:
         print('\nLa cantidad de nodos de arbol son: ', str(nodes))
         print('\nLa primera fecha registrada es: ', str(min_key))
         print('\nLa ultima fecha registrada es: ', str(max_key))
-
+        
     elif int(inputs[0]) == 3:
-        print("\nBuscando accidentes en un rango de fechas:\n>")
-        print('\nRecuerde formato YYYY-mm-dd HH:MM:SS')
+        print('\nRecuerde el formato YYYY-mm-dd')
         date_row=input('\nIngrese la fecha con la que desea investigar:\n>')
-        ans=controller.findBydate(cont, date_row)
-        print(ans)
-
+        try:
+            date=datetime.datetime.strptime(date_row, '%Y-%m-%d')
+        except:
+            date=None
+        if date is None:
+            print('\nEl formato no es correcto.')
+        else:
+            ans=controller.findByday(cont,date.date())
+            if ans is None:
+                print('\nLa fecha ingresada no se encuentra dentro del rango de fechas registradas.')
+            else:
+                (lst, size)= controller.findByday(cont,date.date())
+                print('\nLa cantidad de accidentes reportados para ese día fue de: ', str(size),'.\n')
+                printlist1(lst)
 
     elif int(inputs[0]) == 4:
-        print("\nRequerimiento No 1 del reto 3: ")
+        print('\nRecuerde formato YYYY-mm-dd')
+        date_row=input('\nIngrese la fecha con la que desea investigar:\n>')
+        try:
+            date=datetime.datetime.strptime(date_row, '%Y-%m-%d')
+        except:
+            date=None
+        if date is None:
+            print('\nEl Formato ingresado no es valido.')
+        else:
+            ans=controller.findBydate(cont, date.date())
+            if ans is None:
+                print('\nLa fecha ingresada no se encuentra dentro del rango de fechas registradas.')
+            else:
+                (max_date, size)=ans
+                print('\nLa cantidad de accidentes registrados hasta la fecha es: ', str(size), '.')
+                date=max_date['date']
+                accidents=max_date['size']
+                print('\nLa fecha con más accidentes registrados fue: ', str(date), 
+                'con un total de : ', str(accidents), 'acidentes.')
 
     else:
         sys.exit(0)

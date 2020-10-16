@@ -25,6 +25,7 @@ from App import model
 import datetime
 import csv
 from DISClib.ADT import orderedmap as om
+from DISClib.Algorithms.Sorting import mergesort
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -72,10 +73,10 @@ def infAnalyzer(analyzer):
     """
     Dado un analizador retorna informacion sobre este.
     """
-    high=om.height(analyzer['lstaccident'])
-    nodes=om.size(analyzer['lstaccident'])
-    min_key=om.minKey(analyzer['lstaccident'])
-    max_key=om.maxKey(analyzer['lstaccident'])
+    high=om.height(analyzer['dateIndex'])
+    nodes=om.size(analyzer['dateIndex'])
+    min_key=om.minKey(analyzer['dateIndex'])
+    max_key=om.maxKey(analyzer['dateIndex'])
     return (high,nodes,min_key,max_key)
 
 def findBydate(analyzer, date):
@@ -84,3 +85,14 @@ def findBydate(analyzer, date):
     """
     mp=analyzer['dateIndex']
     return model.findBydate(mp, date)
+def findByday(analyzer,date):
+    """
+    Busca todas los accidentes que ocurrieron en una fecha específica, reportando la cantidad de accidentes por severidad para dicha fecha
+    """
+    mp=analyzer["dateIndex"]
+    try:
+        (lst, size) = model.findByday(mp,date)
+        mergesort.mergesort(lst, model.cmpSeverity)
+        return (lst, size)
+    except:
+        return None
