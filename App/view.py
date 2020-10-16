@@ -71,6 +71,7 @@ def printMenu():
     print("2- Cargar información de accidentes")
     print("3- Conocer los accidentes en una fecha")
     print("4- Buscando accidentes anteriores a una fecha")
+    print("5- Buscando accidentes en el rango de fechas")
     print("0- Salir")
     print("*******************************************")
 
@@ -130,6 +131,31 @@ while True:
             else:
                 (max_date, size)=ans
                 print('\nLa cantidad de accidentes registrados hasta la fecha es: ', str(size), '.')
+                date=max_date['date']
+                accidents=max_date['size']
+                print('\nLa fecha con más accidentes registrados fue: ', str(date), 
+                'con un total de : ', str(accidents), 'acidentes.')
+    elif int(inputs[0]) == 5:
+        print('\nRecuerde formato YYYY-mm-dd')
+        date_row1=input('\nIngrese la fecha inicial que desea investigar:\n>')
+        date_row2=input('\nIngrese la fecha final que desea investigar:\n>')
+        try:
+            date1=datetime.datetime.strptime(date_row1, '%Y-%m-%d')
+        except:
+            date1=None
+        try:
+            date2=datetime.datetime.strptime(date_row2, '%Y-%m-%d')
+        except:
+            date2=None
+        if date1 is None or date2 is None:
+            print('\nEl Formato ingresado no es valido.')
+        else:
+            ans=controller.findByDateRank(cont, date1.date(), date2.date())
+            if ans is None:
+                print('\nLa fecha ingresada no se encuentra dentro del rango de fechas registradas.')
+            else:
+                (max_date, size)=ans
+                print('\nLa cantidad de accidentes registrados entre las fechas es: ', str(size), '.')
                 date=max_date['date']
                 accidents=max_date['size']
                 print('\nLa fecha con más accidentes registrados fue: ', str(date), 

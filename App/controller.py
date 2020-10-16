@@ -85,6 +85,14 @@ def findBydate(analyzer, date):
     """
     mp=analyzer['dateIndex']
     return model.findBydate(mp, date)
+
+def findByDateRank(analyzer, date1, date2):
+    """
+    Busca todas los accidentes que ocurrieron antes de una fecha.
+    """
+    mp=analyzer['dateIndex']
+    return model.findByDateRank(mp, date1, date2)
+
 def findByday(analyzer,date):
     """
     Busca todas los accidentes que ocurrieron en una fecha específica, reportando la cantidad de accidentes por severidad para dicha fecha
