@@ -23,6 +23,8 @@ import config
 from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
+from DISClib.DataStructures import linkedlistiterator as it 
+from DISClib.DataStructures import arraylist as array 
 from DISClib.ADT import map as m
 import datetime
 assert config
@@ -128,8 +130,27 @@ def findBydate(map, key):
     """
     minkey=om.minKey(map)
     rank=om.keys(map, minkey, key)
-    return rank
+    iterator= it.newIterator(rank)
+    total_accidentes=0
+    lista2=None
+    while it.hasNext(iterator):
+        llave= it.next(iterator)
+        lista1=om.get(map,key)
+        lista2=me.getValue(lista1)
+        total_accidentes+=lista2["lstaccident"]["size"]
+        
+    
 
+    return total_accidentes
+def findByday(map,key):
+    """
+    Busca todas los accidentes que ocurrieron en una fecha específica
+    """
+    date_lo= key +" "+"00:00:00"
+    date_hi= key +" "+"23:59:59"
+    rank=om.keys(map,date_lo,date_hi)
+    size=om.size(rank)
+    return (rank,size)
 
 # ==============================
 # Funciones de Comparacion
@@ -161,7 +182,7 @@ def cmpDates(date1, date2):
 
 def cmpCoordinates(coordinate1, coordinate2):
     """
-    Compara las coordenadas de dos crimenes
+    Compara las coordenadas de dos accidentes
     """
     if coordinate1 < coordinate2:
         return -1
@@ -169,3 +190,13 @@ def cmpCoordinates(coordinate1, coordinate2):
         return 0
     else:
         return 1
+def cmpSeverity(Severity1,Severity2):
+    """
+    Compara la severidad de dos accidentes
+    """
+    if Severity1 < Severity2:
+        return -1
+    elif Severity1 == Severity1:
+        return 0
+    else:
+        return 1   

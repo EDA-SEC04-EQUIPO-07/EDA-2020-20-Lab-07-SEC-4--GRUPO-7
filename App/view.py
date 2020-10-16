@@ -22,6 +22,7 @@
 
 import sys
 import config
+import datetime
 from DISClib.ADT import list as lt
 from App import controller
 assert config
@@ -77,17 +78,24 @@ while True:
         print('\nLa cantidad de nodos de arbol son: ', str(nodes))
         print('\nLa primera fecha registrada es: ', str(min_key))
         print('\nLa ultima fecha registrada es: ', str(max_key))
-
+        
     elif int(inputs[0]) == 3:
+        print("\n Conocer los accidentes en una fecha: ")
+        print('\nRecuerde formato YYYY-mm-dd')
+        date=input('\nIngrese la fecha con la que desea investigar:\n>')
+        ans= controller.findByday(cont,date)
+        print(ans)
+
+    elif int(inputs[0]) == 4:
         print("\nBuscando accidentes en un rango de fechas:\n>")
         print('\nRecuerde formato YYYY-mm-dd HH:MM:SS')
         date_row=input('\nIngrese la fecha con la que desea investigar:\n>')
-        ans=controller.findBydate(cont, date_row)
-        print(ans)
+        date_row=datetime.datetime.strptime(date_row, '%Y-%m-%d')
+        ans=controller.findBydate(cont, date_row.date())
+        print(str(ans))
 
 
-    elif int(inputs[0]) == 4:
-        print("\nRequerimiento No 1 del reto 3: ")
+
 
     else:
         sys.exit(0)
