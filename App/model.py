@@ -133,9 +133,12 @@ def findByday(map,key):
     """
     entry=om.get(map, key)
     value=me.getValue(entry)
-    accidents=value['lstaccident']
-    size=lt.size(accidents)
-    return (accidents,size)
+    try:
+        accidents=value['lstaccident']
+        size=lt.size(accidents)
+        return (accidents,size)
+    except:
+        return None
 
 def findBydate(map, key):
     """

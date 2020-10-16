@@ -91,5 +91,8 @@ def findByday(analyzer,date):
     """
     mp=analyzer["dateIndex"]
     (lst, size) = model.findByday(mp,date)
-    mergesort.mergesort(lst, model.cmpSeverity)
-    return (lst, size)
+    try:
+        mergesort.mergesort(lst, model.cmpSeverity)
+        return (lst, size)
+    except:
+        return None
