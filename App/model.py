@@ -84,14 +84,21 @@ def addNewDate(analyzer, accident):
         om.put(dates, date.date(), value)
     else:
         value=me.getValue(entry)
-    addIdIndex(value['hourIndex'], accident, date)
+    lt.addLast(value['lstaccident'],accident)
+    addHourIndex(value['hourIndex'], accident, date)
   
-def addIdIndex(map, accident, date):
+def addHourIndex(map, accident, date):
     """
     Agrega informacion al mapa de Ids.
     """
     hour=date.time()
-    om.put(map, hour, accident)
+    entry=om.get(map, hour)
+    if entry is None:
+        value=newHourIndex(hour)
+        om.put(map, hour, value)
+    else:
+        value=me.getValue(entry)
+    lt.addLast(value['lstaccident'],accident)
 
 # ==============================
 # Creacion de entradas
@@ -107,9 +114,31 @@ def newDateIndex():
     entry['hourIndex']=om.newMap(omaptype='RBT', comparefunction=cmpDates)
     return entry
 
+def newHourIndex(hour):
+    """
+    Crea un elmento del arbol que organiza los eventos por hora.
+    """
+    entry={'hour':None, 'lstaccident':None}
+    entry['hour']=hour
+    entry['lstaccident']=lt.newList(datastructure='SINGLE_LINKED', cmpfunction=cmpDates)
+    return entry
+
 # ==============================
 # Funciones de consulta
 # ==============================
+
+def findByday(map,key):
+    """
+    Busca todas los accidentes que ocurrieron en una fecha específica
+    """
+    entry=om.get(map, key)
+    value=me.getValue(entry)
+    try:
+        accidents=value['lstaccident']
+        size=lt.size(accidents)
+        return (accidents,size)
+    except:
+        return None
 
 def findBydate(map, key):
     """
@@ -129,15 +158,7 @@ def findBydate(map, key):
     
 
     return total_accidentes
-def findByday(map,key):
-    """
-    Busca todas los accidentes que ocurrieron en una fecha específica
-    """
-    date_lo= key +" "+"00:00:00"
-    date_hi= key +" "+"23:59:59"
-    rank=om.keys(map,date_lo,date_hi)
-    size=om.size(rank)
-    return (rank,size)
+
 
 # ==============================
 # Funciones de Comparacion
@@ -149,12 +170,12 @@ def cmpIDs(id1,id2):
     """
     id1=str(id1)
     id2=str(id2)
-    if (id1 == id2):
-        return 0
-    elif id1 > id2:
-        return 1
-    else:
+    if id1 < id2:
         return -1
+    elif id1 == id2:
+        return 0
+    else:
+        return 1
 
 
 
@@ -179,11 +200,13 @@ def cmpCoordinates(coordinate1, coordinate2):
         return 0
     else:
         return 1
-def cmpSeverity(Severity1,Severity2):
+def cmpSeverity(accident1,accident2):
     """
     Compara la severidad de dos accidentes
     """
-    if Severity1 < Severity2:
+    Severity1=accident1['Severity']
+    Severity2=accident2['Severity']
+    if Severity1 > Severity2:
         return -1
     elif Severity1 == Severity1:
         return 0

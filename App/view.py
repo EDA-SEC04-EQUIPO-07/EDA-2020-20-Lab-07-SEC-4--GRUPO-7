@@ -24,6 +24,7 @@ import sys
 import config
 import datetime
 from DISClib.ADT import list as lt
+from DISClib.DataStructures import listiterator as it
 from App import controller
 assert config
 sys.setrecursionlimit(10000)
@@ -40,6 +41,22 @@ operación seleccionada.
 # ___________________________________________________
 
 file='\\us_accidents_small.csv'
+
+# ___________________________________________________
+#  Funciones de impresion
+# ___________________________________________________
+
+def printlist1(lst):
+    """
+    Imprime los elementos de una lista.
+    """
+    iterator=it.newIterator(lst)
+    while it.hasNext(iterator):
+        value=it.next(iterator)
+        id=value['ID']
+        severity=value['Severity']
+        start=value['Start_Time']
+        print('\nEl id del accidente es: ', str(id), ' con severidad de: ', str(severity), ' con hora de inicio: ', str(start) , '.')
 
 # ___________________________________________________
 #  Menu principal
@@ -82,20 +99,23 @@ while True:
     elif int(inputs[0]) == 3:
         print("\n Conocer los accidentes en una fecha: ")
         print('\nRecuerde formato YYYY-mm-dd')
-        date=input('\nIngrese la fecha con la que desea investigar:\n>')
-        ans= controller.findByday(cont,date)
-        print(ans)
+        date_row=input('\nIngrese la fecha con la que desea investigar:\n>')
+        date=datetime.datetime.strptime(date_row, '%Y-%m-%d')
+        ans=controller.findByday(cont,date.date())
+        if ans is None:
+            print('Llave no valida')
+        else:
+            (lst, size)= controller.findByday(cont,date.date())
+            print('\nLa cantidad de accidentes reportados para ese día fue de: ', str(size),'.\n')
+            printlist1(lst)
 
     elif int(inputs[0]) == 4:
         print("\nBuscando accidentes en un rango de fechas:\n>")
         print('\nRecuerde formato YYYY-mm-dd')
         date_row=input('\nIngrese la fecha con la que desea investigar:\n>')
-        date_row=datetime.datetime.strptime(date_row, '%Y-%m-%d')
-        ans=controller.findBydate(cont, date_row.date())
-        print(str(ans))
-
-
-
+        date=datetime.datetime.strptime(date_row, '%Y-%m-%d')
+        (lst, size)=controller.findBydate(cont, date_row.date())
+        print(None)
 
     else:
         sys.exit(0)
