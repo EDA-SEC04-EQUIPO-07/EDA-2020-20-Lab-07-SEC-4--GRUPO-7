@@ -66,12 +66,16 @@ def printlist1(lst):
 def printMenu():
     print("\n")
     print("*******************************************")
-    print("Bienvenido")
-    print("1- Inicializar Analizador")
-    print("2- Cargar información de accidentes")
-    print("3- Conocer los accidentes en una fecha")
-    print("4- Buscando accidentes anteriores a una fecha")
-    print("0- Salir")
+    print('Bienvenido')
+    print('1- Inicializar Analizador')
+    print('2- Cargar información de accidentes')
+    print('3- Conocer los accidentes en una fecha')
+    print('4- Buscando accidentes anteriores a una fecha')
+    print('5- req 3')
+    print('6- req 4')
+    print('7- req 5')
+    print('8- req 6')
+    print('0- Salir')
     print("*******************************************")
 
 
@@ -82,12 +86,12 @@ while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n>')
 
-    if int(inputs[0]) == 1:
+    if inputs[0] == '1':
         print("\nInicializando....")
         # cont es el controlador que se usará de acá en adelante
         cont = controller.init()
 
-    elif int(inputs[0]) == 2:
+    elif inputs[0] == '2':
         print("\nCargando información de accidentes ....")
         controller.loadData(cont, file)
         (high,nodes,min_key,max_key)=controller.infAnalyzer(cont)
@@ -96,7 +100,7 @@ while True:
         print('\nLa primera fecha registrada es: ', str(min_key))
         print('\nLa ultima fecha registrada es: ', str(max_key))
         
-    elif int(inputs[0]) == 3:
+    elif inputs[0] == '3' :
         print('\nRecuerde el formato YYYY-mm-dd')
         date_row=input('\nIngrese la fecha con la que desea investigar:\n>')
         try:
@@ -114,7 +118,7 @@ while True:
                 print('\nLa cantidad de accidentes reportados para ese día fue de: ', str(size),'.\n')
                 printlist1(lst)
 
-    elif int(inputs[0]) == 4:
+    elif inputs[0] == '4':
         print('\nRecuerde formato YYYY-mm-dd')
         date_row=input('\nIngrese la fecha con la que desea investigar:\n>')
         try:
@@ -135,6 +139,22 @@ while True:
                 print('\nLa fecha con más accidentes registrados fue: ', str(date), 
                 'con un total de : ', str(accidents), 'acidentes.')
 
-    else:
+    elif inputs[0] == '5':
+        print(None)
+    
+    elif inputs[0] == '6':
+        print(None)
+
+    elif inputs[0] == '7':
+        print(None)
+
+    elif inputs[0] == '8':
+        print(None)
+
+    elif inputs[0] == '0':
         sys.exit(0)
+        
+    else:
+        print('\nOpcion no valida.')
+
 sys.exit(0)
