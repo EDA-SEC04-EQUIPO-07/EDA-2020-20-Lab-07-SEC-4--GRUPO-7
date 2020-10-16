@@ -25,6 +25,7 @@ from App import model
 import datetime
 import csv
 from DISClib.ADT import orderedmap as om
+from DISClib.Algorithms.Sorting import mergesort
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -89,4 +90,6 @@ def findByday(analyzer,date):
     Busca todas los accidentes que ocurrieron en una fecha específica, reportando la cantidad de accidentes por severidad para dicha fecha
     """
     mp=analyzer["dateIndex"]
-    return model.findByday(mp,date)
+    (lst, size) = model.findByday(mp,date)
+    mergesort.mergesort(lst, model.cmpSeverity)
+    return (lst, size)
