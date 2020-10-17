@@ -26,6 +26,7 @@ from DISClib.DataStructures import mapentry as me
 from DISClib.DataStructures import linkedlistiterator as it 
 from DISClib.DataStructures import arraylist as array 
 from DISClib.ADT import map as m
+import math
 import datetime
 assert config
 
@@ -207,6 +208,23 @@ def RangeHours(analyzer, hour1, hour2):
         return (accidents,size)
     except:
         return None
+def distance_between_2_points(lt1,lt2,ln1,ln2,):
+    """
+    calcula la distancia entre 2 coordenadas, con un radio específico.
+    lt1=latititud 1   //coordenadas
+    lt2= latitud 2    // coordenadas
+    ln1= longitud 1   //coordenadas
+    ln2= longitud 2   //coordenadas
+    """
+    radio= 6371e3 #radio de la tierra
+    rad1 = lt1 * math.pi/180 
+    rad2 = lt2 * math.pi/180
+    delta1 = (lt2-lt1) * math.pi/180
+    delta2 = (ln2-ln1) * math.pi/180
+    a = math.sin(delta1/2) * math.sin(delta1/2) + math.cos(rad1) * math.cos(rad2) * math.sin(delta2/2) * math.sin(delta2/2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    d= radio*c
+    return (d)
 
 # ==============================
 # Funciones de Comparacion
