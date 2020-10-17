@@ -196,6 +196,8 @@ while True:
         print('\nRecuerde el formato para las horas HH:MM')
         hour1_row=input('\nIngrese la hora menor:\n>')
         hour2_row=input('\nIngrese la hora mayot:\n>')
+        hour1_row=controller.aproxhour(hour1_row)
+        hour2_row=controller.aproxhour(hour2_row)
         try:
             hour1=datetime.datetime.strptime(hour1_row, '%H:%M')
             hour2=datetime.datetime.strptime(hour2_row, '%H:%M')
