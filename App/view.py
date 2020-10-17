@@ -193,12 +193,12 @@ while True:
                 print('\nEl estado con mas accidentes registrados entre las fechas es: ', str(state), '.')
 
     elif inputs == '7':
-        print('\nRecuerde el formato para las horas HH:MM:ss')
+        print('\nRecuerde el formato para las horas HH:MM')
         hour1_row=input('\nIngrese la hora menor:\n>')
         hour2_row=input('\nIngrese la hora mayot:\n>')
         try:
-            hour1=datetime.datetime.strptime(hour1_row, '%H:%M:%S')
-            hour2=datetime.datetime.strptime(hour2_row, '%H:%M:%S')
+            hour1=datetime.datetime.strptime(hour1_row, '%H:%M')
+            hour2=datetime.datetime.strptime(hour2_row, '%H:%M')
         except:
             hour1=None
             hour2=None
