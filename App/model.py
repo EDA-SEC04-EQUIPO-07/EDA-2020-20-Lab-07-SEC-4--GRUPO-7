@@ -172,6 +172,98 @@ def findBydate(map, key):
     except:
         return None
 
+def findByDateRank(map, key1, key2):
+    """
+    Busca los accidentes en un rango de fechas y la categoria de accidentes más reportadas en dicho rango.
+    """
+    try:
+        rank=om.keys(map, key1, key2)
+        iterator1= it.newIterator(rank)
+        buckets=lt.newList(datastructure='SINGLE_LINKED')
+
+        while it.hasNext(iterator1):
+            key2=it.next(iterator1)
+            entry=om.get(map, key2)
+            value=me.getValue(entry)
+            lt.addLast(buckets, value)
+
+        total_accidents=0
+        dic_categorias={'1':0,'2':0,'3':0,'4':0}
+        iterator2=it.newIterator(buckets)
+        while it.hasNext(iterator2):
+            value=it.next(iterator2)
+            lst=value['lstaccident']
+            size=int(lt.size(lst))
+            total_accidents=total_accidents+size
+            iterator3=it.newIterator(lst)
+            while it.hasNext(iterator3):
+                value=it.next(iterator3)
+                categoria=value["Severity"]
+                if categoria == "1":
+                    dic_categorias["1"]+=1
+                elif categoria == "2":
+                    dic_categorias["2"]+=1
+                elif categoria == "3":
+                    dic_categorias["3"]+=1
+                elif categoria == "4":
+                    dic_categorias["4"]+=1
+        max_categoria=0
+        for i in dic_categorias:
+            if dic_categorias[i] > max_categoria:
+                max_categoria= dic_categorias[i]
+                max_Severity=i
+        
+        return(max_Severity, total_accidents)
+    except:
+        return None
+
+def findByDateState(map, key1, key2):
+    """
+    Busca los accidentes en un rango de fechas y la categoria de accidentes más reportadas en dicho rango.
+    """
+    try:
+        rank=om.keys(map, key1, key2)
+        iterator1= it.newIterator(rank)
+        buckets=lt.newList(datastructure='SINGLE_LINKED')
+
+        while it.hasNext(iterator1):
+            key2=it.next(iterator1)
+            entry=om.get(map, key2)
+            value=me.getValue(entry)
+            lt.addLast(buckets, value)
+        max_accident={'size':0,'date':None}
+        iterator2=it.newIterator(buckets)
+        while it.hasNext(iterator2):
+            value=it.next(iterator2)
+            lst=value['lstaccident']
+            size=int(lt.size(lst))
+            if size > max_accident['size']:
+                max_accident['size']=size
+                max_accident['date']=value['date']  
+
+        list_estados=[]
+        dict_estados={}     
+        iterator3=it.newIterator(buckets)
+        while it.hasNext(iterator3):
+            value=it.next(iterator3)
+            lst=value['lstaccident']
+            iterator4=it.newIterator(lst)
+            while it.hasNext(iterator4):
+                value=it.next(iterator4)
+                estado=value["State"]
+                if estado not in list_estados:
+                    list_estados.append(estado)
+                    dict_estados[estado]=1
+                elif estado in list_estados:
+                    dict_estados[estado]+=1
+        max_state=0
+        for i in dict_estados:
+            if dict_estados[i] > max_state:
+                max_state= dict_estados[i]
+                state=i
+        return(max_accident, state )
+    except:
+        return None
 
 def RangeHours(analyzer, hour1, hour2):
     """

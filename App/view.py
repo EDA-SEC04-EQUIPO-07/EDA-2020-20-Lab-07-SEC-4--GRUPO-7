@@ -73,8 +73,8 @@ def printMenu():
     print('2- Cargar información de accidentes.')
     print('3- Conocer los accidentes en una fecha.')
     print('4- Buscando accidentes anteriores a una fecha.')
-    print('5- req 3')
-    print('6- req 4')
+    print('5- Conocer los accidentes en un rango de fechas y la categoría de accidentes más reportadas en dicho rango')
+    print('6- Conocer la fecha con más accidentes reportados en un rango de fechas.')
     print('7- Busca Todos los accidentes que ocurrieron en cierto rango de horas.')
     print('8- req 6')
     print('0- Salir')
@@ -144,10 +144,53 @@ while True:
                 'con un total de : ', str(accidents), 'acidentes.')
 
     elif inputs == '5':
-        print(None)
+        print('\nRecuerde formato YYYY-mm-dd')
+        date_row1=input('\nIngrese la fecha inicial con la que desea investigar:\n>')
+        date_row2=input('\nIngrese la fecha final con la que desea investigar:\n>')
+        try:
+            date1=datetime.datetime.strptime(date_row1, '%Y-%m-%d')
+        except:
+            date1=None
+        try:
+            date2=datetime.datetime.strptime(date_row2, '%Y-%m-%d')
+        except:
+            date2=None
+        if date1 is None or date2 is None:
+            print('\nEl Formato ingresado no es valido.')
+        else:
+            ans=controller.findByDateRank(cont, date1.date(),date2.date())
+            if ans is None:
+                print('\nLa fecha ingresada no se encuentra dentro del rango de fechas registradas.')
+            else:
+                (categoria, size)=ans
+                print('\nLa cantidad de accidentes registrados estre las fechas es: ', str(size), '.')
+                print('\nLa categoria con más accidentes registrados fue: ', str(categoria))
     
     elif inputs == '6':
-        print(None)
+        print('\nRecuerde formato YYYY-mm-dd')
+        date_row1=input('\nIngrese la fecha inicial con la que desea investigar:\n>')
+        date_row2=input('\nIngrese la fecha final con la que desea investigar:\n>')
+        try:
+            date1=datetime.datetime.strptime(date_row1, '%Y-%m-%d')
+        except:
+            date1=None
+        try:
+            date2=datetime.datetime.strptime(date_row2, '%Y-%m-%d')
+        except:
+            date2=None
+        if date1 is None or date2 is None:
+            print('\nEl Formato ingresado no es valido.')
+        else:
+            ans=controller.findByDateState(cont, date1.date(),date2.date())
+            if ans is None:
+                print('\nLa fecha ingresada no se encuentra dentro del rango de fechas registradas.')
+            else:
+                (max_date, state)=ans
+                date=max_date['date']
+                accidents=max_date['size']
+                print('\nLa fecha con más accidentes registrados fue: ', str(date), 
+                'con un total de : ', str(accidents), 'acidentes.')
+                print('\nEl estado con mas accidentes registrados entre las fechas es: ', str(state), '.')
 
     elif inputs == '7':
         print('\nRecuerde el formato para las horas HH:MM:ss')
