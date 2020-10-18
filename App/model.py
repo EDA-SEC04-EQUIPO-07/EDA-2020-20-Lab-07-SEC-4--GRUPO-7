@@ -51,14 +51,16 @@ def newAnalaizer():
         -Un ordered map que por llaves tiene las latitudes y longitudes en las que ocurrieron los crimenes.
         -Una lista de crimenes vacia.
     """
-    analyzer={'lstaccident': None, 'dateIndex': None, 'coordinatesIndex': None, 'Number':0}
+    analyzer={'lstaccident': None, 'dateIndex': None, 'latitudeIndex': None,'longitudeIndex':None , 'Number':0}
 
     analyzer['lstaccident']=lt.newList(datastructure='SINGLE_LINKED',cmpfunction=cmpIDs )
     
     analyzer['dateIndex']=om.newMap(omaptype='RBT',
                                     comparefunction=cmpDates)
-    #analyzer['coordinateIndex']=om.newMap(omaptype='RBT',
-                                    #comparefunction= cmpCoordinates)
+    analyzer['latitudeIndex']=om.newMap(omaptype='RBT',
+                                    comparefunction= cmpLatitude)
+    analyzer['longitudeIndex']=om.newMap(omaptype='RBT',
+                                    comparefunction= cmpLongitude)
 
     return analyzer
 
@@ -302,7 +304,7 @@ def RangeHours(analyzer, hour1, hour2):
         return (accidents,size)
     except:
         return None
-def distance_between_2_points(lt1,lt2,ln1,ln2,):
+def distance_between_2_points(lt1,lt2,ln1,ln2):
     """
     calcula la distancia entre 2 coordenadas, con un radio específico.
     lt1=latititud 1   //coordenadas
@@ -310,7 +312,7 @@ def distance_between_2_points(lt1,lt2,ln1,ln2,):
     ln1= longitud 1   //coordenadas
     ln2= longitud 2   //coordenadas
     """
-    radio= 6371e3 #radio de la tierra
+    radio= 6371e3 #radio de la tierra en metros
     rad1 = lt1 * math.pi/180 
     rad2 = lt2 * math.pi/180
     delta1 = (lt2-lt1) * math.pi/180
@@ -319,6 +321,26 @@ def distance_between_2_points(lt1,lt2,ln1,ln2,):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
     d= radio*c
     return (d)
+
+def findBygeographiczone(map,latitude,longitude,radio):
+    """
+    dada una coordenadas como centro y radio, encuentra todos los accidentes ocurridos en ese radio.
+    """
+    try:
+        longitudeIndex=analyzer['longitudeIndex']
+        latitudeIndex=analyzer['latitudeIndex']
+        min_key_lat=om.minKey(latitudeIndex)
+        max_key_lat=om.maxKey(latitudeIndex)
+        keys_lat=om.keys(dateIndex, min_key_lat,max_key_lat)
+        maps=lt.newList(datastructure='SINGLE_LINKED')
+        iterator1=it.newIterator(keys_lat)
+        while it.hasNext(iterator1):
+    
+
+        size=lt.size()
+        return ()
+    except:
+        return None
 
 
 # ==============================
@@ -351,16 +373,32 @@ def cmpDates(date1, date2):
     else: 
         return 1
 
-def cmpCoordinates(coordinate1, coordinate2):
+def cmpLatitude(coordinate1, coordinate2):
     """
     Compara las coordenadas de dos accidentes
     """
+    coordinate1=coordinate1["Start_Lat"]
+    coordinate2=coordinate2["Start_Lat"]
     if coordinate1 < coordinate2:
         return -1
     elif coordinate1 == coordinate2:
         return 0
     else:
         return 1
+def cmpLongitude(coordinate1, coordinate2):
+    """
+    Compara las coordenadas de dos accidentes
+    """
+    coordinate1=coordinate1["Start_Lng"]
+    coordinate2=coordinate2["Start_Lng"]
+    if coordinate1 < coordinate2:
+        return -1
+    elif coordinate1 == coordinate2:
+        return 0
+    else:
+        return 1
+
+
 def cmpSeverity(accident1,accident2):
     """
     Compara la severidad de dos accidentes
