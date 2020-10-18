@@ -85,6 +85,21 @@ def findBydate(analyzer, date):
     """
     mp=analyzer['dateIndex']
     return model.findBydate(mp, date)
+
+def findByDateRank(analyzer, date1, date2):
+    """
+    Busca todas los accidentes que ocurrieron antes de una fecha.
+    """
+    mp=analyzer['dateIndex']
+    return model.findByDateRank(mp, date1, date2)
+
+def findByDateState(analyzer, date1, date2):
+    """
+    Busca todas los accidentes que ocurrieron antes de una fecha.
+    """
+    mp=analyzer['dateIndex']
+    return model.findByDateState(mp, date1, date2)
+
 def findByday(analyzer,date):
     """
     Busca todas los accidentes que ocurrieron en una fecha específica, reportando la cantidad de accidentes por severidad para dicha fecha
@@ -107,3 +122,32 @@ def RangeHour(analyzer, hour1, hour2):
         return (lst, size)
     except: 
         return None
+
+
+# ___________________________________________________
+#  Helper
+# ___________________________________________________
+
+def aproxhour(hour):
+    """
+    Aproxima los valores de ciertas horas.
+    """
+    hours=int(hour[:2])
+    minutes=int(hour[3:])
+    if minutes in range(0,11):
+        minutes=00
+    elif minutes in range(10,20):
+        minutes=15
+    elif minutes in range(20,30):
+        minutes=30
+    else:
+        minutes=00
+        hours+=1
+    minutes=str(minutes)
+    hours=str(hours)
+    if len(minutes) == 1:
+        minutes= '0' + minutes
+    if len(hours) == 1:
+        minutes= '0' + hours
+    hour= hours + ':' +minutes
+    return hour
