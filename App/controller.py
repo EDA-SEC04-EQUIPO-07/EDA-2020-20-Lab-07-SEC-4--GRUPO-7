@@ -105,23 +105,13 @@ def findByday(analyzer,date):
     Busca todas los accidentes que ocurrieron en una fecha específica, reportando la cantidad de accidentes por severidad para dicha fecha
     """
     mp=analyzer["dateIndex"]
-    try:
-        (lst, size) = model.findByday(mp,date)
-        mergesort.mergesort(lst, model.cmpSeverity)
-        return (lst, size)
-    except:
-        return None
+    return model.findByday(mp,date)
 
 def RangeHour(analyzer, hour1, hour2):
     """
     Busca todos los accidentes que ocurrieron en un rago de horas.
     """
-    try:
-        (lst, size)=model.RangeHours(analyzer, hour1, hour2)
-        mergesort.mergesort(lst, model.cmpSeverity)
-        return (lst, size)
-    except: 
-        return None
+    return model.RangeHours(analyzer, hour1, hour2)
 
 
 # ___________________________________________________
@@ -132,22 +122,4 @@ def aproxhour(hour):
     """
     Aproxima los valores de ciertas horas.
     """
-    hours=int(hour[:2])
-    minutes=int(hour[3:])
-    if minutes in range(0,11):
-        minutes=00
-    elif minutes in range(10,20):
-        minutes=15
-    elif minutes in range(20,30):
-        minutes=30
-    else:
-        minutes=00
-        hours+=1
-    minutes=str(minutes)
-    hours=str(hours)
-    if len(minutes) == 1:
-        minutes= '0' + minutes
-    if len(hours) == 1:
-        minutes= '0' + hours
-    hour= hours + ':' +minutes
-    return hour
+    return model.aproxhour(hour)

@@ -60,6 +60,7 @@ def printlist1(lst):
         start=value['Start_Time']
         print('\nEl id del accidente es: ', str(id), ' con severidad de: ', str(severity), ' con hora de inicio: ', str(start) , '.')
 
+
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
@@ -96,7 +97,7 @@ while True:
     elif inputs == '2':
         print("\nCargando información de accidentes ....")
         controller.loadData(cont, file)
-        print(file_heavy)
+        print(file)
         (high,nodes,min_key,max_key)=controller.infAnalyzer(cont)
         print('\nLa altura del arbol cargado es igual a: ', str(high))
         print('\nLa cantidad de nodos de arbol son: ', str(nodes))
@@ -118,9 +119,10 @@ while True:
             if ans is None:
                 print('\nLa fecha ingresada no se encuentra dentro del rango de fechas registradas.')
             else:
-                (lst, size)= controller.findByday(cont,date.date())
+                (categories, size)= controller.findByday(cont,date.date())
                 print('\nLa cantidad de accidentes reportados para ese día fue de: ', str(size),'.\n')
-                printlist1(lst)
+                for categorie in categories:
+                    print('\nLa categoria: ', str(categorie), ' tiene una cantidad de accidentes: ', categories[categorie])
 
     elif inputs == '4':
         print('\nRecuerde formato YYYY-mm-dd')
@@ -196,9 +198,10 @@ while True:
         print('\nRecuerde el formato para las horas HH:MM')
         hour1_row=input('\nIngrese la hora menor:\n>')
         hour2_row=input('\nIngrese la hora mayot:\n>')
-        hour1_row=controller.aproxhour(hour1_row)
-        hour2_row=controller.aproxhour(hour2_row)
+
         try:
+            hour1_row=controller.aproxhour(hour1_row)
+            hour2_row=controller.aproxhour(hour2_row)
             hour1=datetime.datetime.strptime(hour1_row, '%H:%M')
             hour2=datetime.datetime.strptime(hour2_row, '%H:%M')
         except:
@@ -211,9 +214,12 @@ while True:
             if ans is None:
                 print('\nRango de horas incorrecto')
             else:
-                (lst, size)=ans
+                (size, dic)=ans
                 print('\nLos accidentes ocurridos en esas horas fueron: ', str(size), '.')
-                printlist1(lst)
+                for categorie in dic:
+                    print('\nLa categoria: ', categorie,'presento una cantidad total: ', str(dic[categorie]))
+                por=round((size/cont['Number'])*100,2)
+                print('\nEsta cantidad de acidentes representa el: ', str(por), '%')
 
     elif inputs == '8':
         print(None)

@@ -59,9 +59,6 @@ def newAnalaizer():
                                     comparefunction=cmpDates)
     analyzer['latitudeIndex']=om.newMap(omaptype='RBT',
                                     comparefunction= cmpLatitude)
-    analyzer['longitudeIndex']=om.newMap(omaptype='RBT',
-                                    comparefunction= cmpLongitude)
-
     return analyzer
 
 # ___________________________________________________
@@ -74,6 +71,7 @@ def addAccident(analyzer, accident):
     """
     lt.addLast(analyzer['lstaccident'], accident)
     addNewDate(analyzer, accident)
+    addLatitudIndex(analyzer['latitudeIndex'], accident)
     analyzer['Number']+=1
 
 def addNewDate(analyzer, accident):
@@ -105,6 +103,32 @@ def addHourIndex(map, accident, date):
         value=me.getValue(entry)
     lt.addLast(value['lstaccident'],accident)
 
+def addLatitudIndex(map, accident):
+    """
+    Agrega un elemento al mapa de latitudes.
+    """
+    latitud=accident['Start_Lat']
+    entry=om.get(map,latitud)
+    if entry is None:
+        value=newLatitudIndex(latitud)
+        om.put(map, latitud, value)
+    else:
+        value=me.getValue(entry)
+    addLongitudIndex(value['longitudIndex'], accident)
+
+def addLongitudIndex(map, accident):
+    """
+    Agrega un elemento al mapa de las longitudes,
+    """
+    longitud=accident['Start_Lng']
+    entry=om.get(map, longitud)
+    if entry is None:
+        value=newLongitudIndex(longitud)
+        om.put(map, longitud, value)
+    else:
+        value=me.getValue(entry)
+    lt.addLast(value['lstaccidents'],accident)
+
 # ___________________________________________________
 # Creacion de entradas
 # ___________________________________________________
@@ -128,6 +152,24 @@ def newHourIndex(hour):
     entry['lstaccident']=lt.newList(datastructure='SINGLE_LINKED', cmpfunction=cmpDates)
     return entry
 
+def newLatitudIndex(Latitud):
+    """
+    Crea un nuevo elemento del arbol que organiza los accidentes de acurdo a la latitutd.
+    """
+    entry={'latitud':None, 'longitudIndex':None}
+    entry['latitud']=Latitud
+    entry['longitudIndex']=om.newMap(omaptype='RBT',comparefunction=cmpLongitude)
+    return entry
+
+def newLongitudIndex(longitud):
+    """
+    Crea un nuevo elemento en el mapa de las longitudes.
+    """
+    entry={'longitud':None,'lstaccidents':None}
+    entry['longitud']=longitud
+    entry['lstaccidents']=lt.newList()
+    return entry
+
 # ___________________________________________________
 # Funciones de consulta
 # ___________________________________________________
@@ -140,8 +182,9 @@ def findByday(map,key):
     value=me.getValue(entry)
     try:
         accidents=value['lstaccident']
+        categories=countCategories(accidents)
         size=lt.size(accidents)
-        return (accidents,size)
+        return (categories,size)
     except:
         return None
 
@@ -286,24 +329,28 @@ def RangeHours(analyzer, hour1, hour2):
             mp=value['hourIndex']
             lt.addLast(maps, mp)
         #parte2
-        accidents=lt.newList(datastructure='SINGLE_LINKED')
+        T_categories={}
+        counter=0
         iterator2=it.newIterator(maps)
         while it.hasNext(iterator2):
             mp=it.next(iterator2)
             keys_hour=om.keys(mp, hour1, hour2)
             keysiterator=it.newIterator(keys_hour)
             while it.hasNext(keysiterator):
+                counter+=1
                 entry=om.get(mp, it.next(keysiterator))
                 value=me.getValue(entry)
                 lst=value['lstaccident']
-                iterator3=it.newIterator(lst)
-                while it.hasNext(iterator3):
-                    accident=it.next(iterator3)
-                    lt.addLast(accidents, accident)
-        size=lt.size(accidents)
-        return (accidents,size)
+                categories=countCategories(lst)
+                for categorie in categories:
+                    if categorie in T_categories:
+                        T_categories[categorie]+=categories[categorie]
+                    else:
+                        T_categories[categorie]=categories[categorie]
+        return (counter,T_categories)
     except:
         return None
+
 def distance_between_2_points(lt1,lt2,ln1,ln2):
     """
     calcula la distancia entre 2 coordenadas, con un radio específico.
@@ -322,26 +369,25 @@ def distance_between_2_points(lt1,lt2,ln1,ln2):
     d= radio*c
     return (d)
 
-def findBygeographiczone(map,latitude,longitude,radio):
-    """
-    dada una coordenadas como centro y radio, encuentra todos los accidentes ocurridos en ese radio.
-    """
-    try:
-        longitudeIndex=analyzer['longitudeIndex']
-        latitudeIndex=analyzer['latitudeIndex']
-        min_key_lat=om.minKey(latitudeIndex)
-        max_key_lat=om.maxKey(latitudeIndex)
-        keys_lat=om.keys(dateIndex, min_key_lat,max_key_lat)
-        maps=lt.newList(datastructure='SINGLE_LINKED')
-        iterator1=it.newIterator(keys_lat)
-        while it.hasNext(iterator1):
+#def findBygeographiczone(map,latitude,longitude,radio):
+    #"""
+    #dada una coordenadas como centro y radio, encuentra todos los accidentes ocurridos en ese radio.
+    #"""
+    #try:
+        #longitudeIndex=analyzer['longitudeIndex']
+        #latitudeIndex=analyzer['latitudeIndex']
+        #min_key_lat=om.minKey(latitudeIndex)
+        #max_key_lat=om.maxKey(latitudeIndex)
+        #keys_lat=om.keys(dateIndex, min_key_lat,max_key_lat)
+        #maps=lt.newList(datastructure='SINGLE_LINKED')
+        #iterator1=it.newIterator(keys_lat)
+        #while it.hasNext(iterator1):
     
 
-        size=lt.size()
-        return ()
-    except:
-        return None
-
+        #size=lt.size()
+        #return ()
+    #except:
+        #return None
 
 # ___________________________________________________
 # Funciones de Comparacion
@@ -377,8 +423,6 @@ def cmpLatitude(coordinate1, coordinate2):
     """
     Compara las coordenadas de dos accidentes
     """
-    coordinate1=coordinate1["Start_Lat"]
-    coordinate2=coordinate2["Start_Lat"]
     if coordinate1 < coordinate2:
         return -1
     elif coordinate1 == coordinate2:
@@ -389,8 +433,6 @@ def cmpLongitude(coordinate1, coordinate2):
     """
     Compara las coordenadas de dos accidentes
     """
-    coordinate1=coordinate1["Start_Lng"]
-    coordinate2=coordinate2["Start_Lng"]
     if coordinate1 < coordinate2:
         return -1
     elif coordinate1 == coordinate2:
@@ -410,4 +452,50 @@ def cmpSeverity(accident1,accident2):
     elif Severity1 == Severity1:
         return 0
     else:
-        return 1   
+        return 1  
+
+# ___________________________________________________
+#  Helper
+# ___________________________________________________
+
+def aproxhour(hour):
+    """
+    Aproxima los valores de ciertas horas.
+    """
+    hours=int(hour[:2])
+    minutes=int(hour[3:])
+    if minutes in range(0,11):
+        minutes=00
+    elif minutes in range(10,20):
+        minutes=15
+    elif minutes in range(20,30):
+        minutes=30
+    else:
+        minutes=00
+        hours+=1
+    minutes=str(minutes)
+    hours=str(hours)
+    if len(minutes) == 1:
+        minutes= '0' + minutes
+    if len(hours) == 1:
+        minutes= '0' + hours
+    hour= hours + ':' +minutes
+    return hour
+
+def countCategories(lst):
+    """
+    Cuenta los accidentes por categorias en una lista.
+
+    retorna:
+        -diccionario con las categorias como llaves y valor la cantidad de accidentes
+    """
+    iterator=it.newIterator(lst)
+    dic={}
+    while it.hasNext(iterator):
+        value=it.next(iterator)
+        categorie=value['Severity']
+        if categorie in dic:
+            dic[categorie]+=1
+        else:
+            dic[categorie]=1
+    return dic
