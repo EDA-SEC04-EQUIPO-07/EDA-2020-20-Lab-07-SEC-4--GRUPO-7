@@ -76,7 +76,7 @@ def printMenu():
     print('5- Conocer los accidentes en un rango de fechas y la categoría de accidentes más reportadas en dicho rango')
     print('6- Conocer la fecha con más accidentes reportados en un rango de fechas.')
     print('7- Busca Todos los accidentes que ocurrieron en cierto rango de horas.')
-    print('8- req 6')
+    print('8-  Conocer la zona geográfica más accidentada')
     print('0- Salir')
     print("*******************************************")
 
@@ -216,7 +216,20 @@ while True:
                 printlist1(lst)
 
     elif inputs == '8':
-        print(None)
+        latitude=input('\nIngrese la latitud de las coordenas del centro  de los accidentes:\n>')
+        longitude=input('\nIngrese la longitud de las coordenadas del centro de los accidentes :\n>')
+        radio=input('\nIngrese el radio del circulo de los accidentes:\n>')
+        try: 
+            ans=controller.findBygeographiczone(cont,latitude,longitude,radio)
+        except:
+            if ans is  None: 
+                print("la llave no es válida")
+            else:
+                (lst,size)=ans
+                print("los días de la semana son: ")
+                print(lst)
+                print ("el total de datos accidentes que se se encuentan en la zona son: ")
+                print(size)
 
     elif inputs == '0':
         sys.exit(0)
