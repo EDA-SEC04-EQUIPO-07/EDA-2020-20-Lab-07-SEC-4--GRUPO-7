@@ -38,9 +38,9 @@ es decir contiene los modelos con los datos en memoria
 
 """
 
-# -----------------------------------------------------
+# ___________________________________________________
 # API del TAD Catalogo de accidentes
-# -----------------------------------------------------
+# ___________________________________________________
 def newAnalaizer():
     """
     Inicia un nuevo analizador.
@@ -64,9 +64,9 @@ def newAnalaizer():
 
     return analyzer
 
-# ==============================
+# ___________________________________________________
 # Funciones para agregar informacion al catalogo
-# ==============================
+# ___________________________________________________
 
 def addAccident(analyzer, accident):
     """
@@ -105,9 +105,9 @@ def addHourIndex(map, accident, date):
         value=me.getValue(entry)
     lt.addLast(value['lstaccident'],accident)
 
-# ==============================
+# ___________________________________________________
 # Creacion de entradas
-# ==============================
+# ___________________________________________________
 
 def newDateIndex(date):
     """
@@ -128,9 +128,9 @@ def newHourIndex(hour):
     entry['lstaccident']=lt.newList(datastructure='SINGLE_LINKED', cmpfunction=cmpDates)
     return entry
 
-# ==============================
+# ___________________________________________________
 # Funciones de consulta
-# ==============================
+# ___________________________________________________
 
 def findByday(map,key):
     """
@@ -343,9 +343,9 @@ def findBygeographiczone(map,latitude,longitude,radio):
         return None
 
 
-# ==============================
+# ___________________________________________________
 # Funciones de Comparacion
-# ==============================
+# ___________________________________________________
 
 def cmpIDs(id1,id2):
     """
