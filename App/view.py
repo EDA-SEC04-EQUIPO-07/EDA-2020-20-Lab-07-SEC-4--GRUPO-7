@@ -118,9 +118,10 @@ while True:
             if ans is None:
                 print('\nLa fecha ingresada no se encuentra dentro del rango de fechas registradas.')
             else:
-                (lst, size)= controller.findByday(cont,date.date())
+                (categories, size)= controller.findByday(cont,date.date())
                 print('\nLa cantidad de accidentes reportados para ese día fue de: ', str(size),'.\n')
-                printlist1(lst)
+                for categorie in categories:
+                    print('\nLa categoria: ', str(categorie), 'Presenta una cantidad de accidentes : ', str(categories[categorie]))
 
     elif inputs == '4':
         print('\nRecuerde formato YYYY-mm-dd')
@@ -211,9 +212,10 @@ while True:
             if ans is None:
                 print('\nRango de horas incorrecto')
             else:
-                (lst, size)=ans
+                (size, categories)=ans
                 print('\nLos accidentes ocurridos en esas horas fueron: ', str(size), '.')
-                printlist1(lst)
+                for categorie in categories:
+                    print('\nLa categoria:', str(categorie), ' presenta un total de:', str(categories[categorie]), 'accidentes')
 
     elif inputs == '8':
         latitude=input('\nIngrese la latitud de las coordenas del centro  de los accidentes:\n>')
