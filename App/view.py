@@ -219,15 +219,17 @@ while True:
         latitude=input('\nIngrese la latitud de las coordenas del centro  de los accidentes:\n>')
         longitude=input('\nIngrese la longitud de las coordenadas del centro de los accidentes :\n>')
         radio=input('\nIngrese el radio del circulo de los accidentes:\n>')
-        ans=controller.findBygeographiczone(cont,latitude,longitude,radio)
-        if ans is  None: 
-            print("la llave no es válida")
-        else:
-            (lst,size)=ans
-            print("los días de la semana son: ")
-            print(lst)
-            print ("el total de datos accidentes que se se encuentan en la zona son: ")
-            print(size)
+        try: 
+            ans=controller.findBygeographiczone(cont,latitude,longitude,radio)
+        except:
+            if ans is  None: 
+                print("la llave no es válida")
+            else:
+                (lst,size)=ans
+                print("los días de la semana son: ")
+                print(lst)
+                print ("el total de datos accidentes que se se encuentan en la zona son: ")
+                print(size)
 
     elif inputs == '0':
         sys.exit(0)

@@ -313,7 +313,7 @@ def findByDateState(map, key1, key2):
 
 def RangeHours(analyzer, hour1, hour2):
     """
-    Dadas dos horas busca la canridad de accidentes que han ocurrido entre esas dos horas.
+    Dadas dos horas busca la cantidad de accidentes que han ocurrido entre esas dos horas.
     """
     try:
         dateIndex=analyzer['dateIndex']
@@ -351,43 +351,29 @@ def RangeHours(analyzer, hour1, hour2):
     except:
         return None
 
-def distance_between_2_points(lt1,lt2,ln1,ln2):
-    """
-    calcula la distancia entre 2 coordenadas, con un radio específico.
-    lt1=latititud 1   //coordenadas
-    lt2= latitud 2    // coordenadas
-    ln1= longitud 1   //coordenadas
-    ln2= longitud 2   //coordenadas
-    """
-    radio= 6371e3 #radio de la tierra en metros
-    rad1 = lt1 * math.pi/180 
-    rad2 = lt2 * math.pi/180
-    delta1 = (lt2-lt1) * math.pi/180
-    delta2 = (ln2-ln1) * math.pi/180
-    a = math.sin(delta1/2) * math.sin(delta1/2) + math.cos(rad1) * math.cos(rad2) * math.sin(delta2/2) * math.sin(delta2/2)
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
-    d= radio*c
-    return (d)
 
-#def findBygeographiczone(map,latitude,longitude,radio):
-    #"""
-    #dada una coordenadas como centro y radio, encuentra todos los accidentes ocurridos en ese radio.
-    #"""
-    #try:
-        #longitudeIndex=analyzer['longitudeIndex']
-        #latitudeIndex=analyzer['latitudeIndex']
-        #min_key_lat=om.minKey(latitudeIndex)
-        #max_key_lat=om.maxKey(latitudeIndex)
-        #keys_lat=om.keys(dateIndex, min_key_lat,max_key_lat)
-        #maps=lt.newList(datastructure='SINGLE_LINKED')
-        #iterator1=it.newIterator(keys_lat)
-        #while it.hasNext(iterator1):
-    
-
-        #size=lt.size()
-        #return ()
-    #except:
-        #return None
+def findBygeographiczone(analyzer,latitude,longitude,radio):
+    """
+    dada una coordenadas como centro y radio, encuentra todos los accidentes ocurridos en ese radio.
+    """
+    try:
+        coordinates=analyzer['LatitudeIndex']
+        min_key=om.minKey(coordinates)
+        max_key=om.maxKey(coordinates)
+        keys_date=om.keys(coordinates, min_key,max_key)
+        maps=lt.newList(datastructure='SINGLE_LINKED')
+        iterator1=it.newIterator(keys_date)
+        while it.hasNext(iterator1):
+            key=it.next(iterator1)
+            lat=om.get(coordinates,key)
+            lng=me.getValue(lat)
+            mp=value['hourIndex']
+            if distance_between_2_points(latitude,lat,longitude,lng) < radio:
+                lt.addLast(maps, mp)
+        size= lt.size(maps)
+        return (maps,size)
+    except:
+        return None
 
 # ___________________________________________________
 # Funciones de Comparacion
@@ -499,3 +485,36 @@ def countCategories(lst):
         else:
             dic[categorie]=1
     return dic
+def distance_between_2_points(lt1,lt2,ln1,ln2):
+    """
+    calcula la distancia entre 2 coordenadas, con un radio específico.
+    lt1=latititud 1   //coordenadas
+    lt2= latitud 2    // coordenadas
+    ln1= longitud 1   //coordenadas
+    ln2= longitud 2   //coordenadas
+    """
+    radio= 6371e3 #radio de la tierra en metros
+    rad1 = lt1 * math.pi/180 
+    rad2 = lt2 * math.pi/180
+    delta1 = (lt2-lt1) * math.pi/180
+    delta2 = (ln2-ln1) * math.pi/180
+    a = math.sin(delta1/2) * math.sin(delta1/2) + math.cos(rad1) * math.cos(rad2) * math.sin(delta2/2) * math.sin(delta2/2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    d= radio*c
+    return (d)
+def day_of_week(number):
+    if number == 0:
+        day= "Monday"
+    elif number == 1:
+        day== "Tuesday"
+    elif number == 2:
+        day== "Wednesday"
+    elif number == 3:
+        day== "Thursday"
+    elif number == 4:
+        day== "Friday"
+    elif number == 5:
+        day== "Saturday"
+    elif number == 6:
+        day== "Sunday"
+    return(day)
