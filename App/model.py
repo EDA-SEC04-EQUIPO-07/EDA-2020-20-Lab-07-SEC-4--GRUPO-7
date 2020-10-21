@@ -51,7 +51,7 @@ def newAnalaizer():
         -Un ordered map que por llaves tiene las latitudes y longitudes en las que ocurrieron los crimenes.
         -Una lista de crimenes vacia.
     """
-    analyzer={'lstaccident': None, 'dateIndex': None, 'latitudeIndex': None,'longitudeIndex':None , 'Number':0}
+    analyzer={'dateIndex': None, 'latitudeIndex': None, 'Number':0}
 
     analyzer['lstaccident']=lt.newList(datastructure='SINGLE_LINKED',cmpfunction=cmpIDs )
     
@@ -69,7 +69,6 @@ def addAccident(analyzer, accident):
     """
     Agrega un accidente al mapa de accidentes.
     """
-    lt.addLast(analyzer['lstaccident'], accident)
     addNewDate(analyzer, accident)
     addLatitudIndex(analyzer['latitudeIndex'], accident)
     analyzer['Number']+=1
@@ -356,24 +355,86 @@ def findBygeographiczone(analyzer,latitude,longitude,radio):
     """
     dada una coordenadas como centro y radio, encuentra todos los accidentes ocurridos en ese radio.
     """
-    try:
-        coordinates=analyzer['LatitudeIndex']
-        min_key=om.minKey(coordinates)
-        max_key=om.maxKey(coordinates)
-        keys_date=om.keys(coordinates, min_key,max_key)
-        maps=lt.newList(datastructure='SINGLE_LINKED')
-        iterator1=it.newIterator(keys_date)
-        while it.hasNext(iterator1):
-            key=it.next(iterator1)
-            lat=om.get(coordinates,key)
-            lng=me.getValue(lat)
-            mp=value['hourIndex']
-            if distance_between_2_points(latitude,lat,longitude,lng) < radio:
-                lt.addLast(maps, mp)
-        size= lt.size(maps)
-        return (maps,size)
-    except:
-        return None
+    mp_latitudes=analyzer['LatitudeIndex']
+    lst=lt.newList(datastructure='SINGLE_LINKED')
+    i=latitude
+    distance=0
+    suma_i=0
+    while distance in range(0,radio):
+        entry1=om.get(mp_latitudes, i)
+        if entry1 is None:
+            i+=1
+            suma_i+=1
+            distance=distance_between_2_points(latitude, i, longitude, longitude)
+        else:
+            value1=me.getValue(entry1)
+            mp_longitudes=value1['longitudIndex']
+            distance2=0
+            j=longitude
+            suma_j=0
+            while distance2 in range(0,radio):
+                entry2=om.get(mp_longitudes, j)
+                if entry2 is None:
+                    j+=1
+                    suma_j+=1
+                    distance2=distance_between_2_points(longitude, i, longitude, j)
+                else:
+                    value2=me.getValue(entry2)
+                    iterator1=it.newIterator(value2['lstaccidents'])
+                    while it.hasNext(iterator1):
+                        accident=it.next(iterator1)
+                        lt.addLast(lst, accident)
+                if suma_j != 0:
+                    j_p=longitude-suma_j
+                    entry2_p=om.get(mp_longitudes, j_p)
+                    if entry2_p is not None:
+                        value2_p=me.getValue(entry2_p)
+                        iterator1_p=it.newIterator(value2_p['lstaccidents'])
+                        while it.hasNext(iterator1_p):
+                            accident=it.next(iterator1_p)
+                            lt.addLast(lst, accident)
+                j+=1
+                suma_j+=1
+                distance2=distance_between_2_points(longitude, i, longitude, j)
+            i+=1
+            suma_i+=1
+            distance=distance_between_2_points(latitude, i, longitude, longitude)
+        if suma_i != 0:
+            i_p=latitude-suma_i
+            entry1_p=om.get(mp_latitudes, i_p)
+            if entry1_p is not None:
+                value1_p=me.getValue(entry1_p)
+                mp_longitudes=value1_p['longitudIndex']
+                distance2=0
+                j=longitude
+                suma_j=0
+                while distance2 in range(0,radio):
+                    entry2=om.get(mp_longitudes, j)
+                    if entry2 is None:
+                        j+=1
+                        suma_j+=1
+                        distance2=distance_between_2_points(longitude, i, longitude, j)
+                    else:
+                        value2=me.getValue(entry2)
+                        iterator1=it.newIterator(value2['lstaccidents'])
+                        while it.hasNext(iterator1):
+                            accident=it.next(iterator1)
+                            lt.addLast(lst, accident)
+                    if suma_j != 0:
+                        j_p=longitude-suma_j
+                        entry2_p=om.get(mp_longitudes, j_p)
+                        if entry2_p is not None:
+                            value2_p=me.getValue(entry2_p)
+                            iterator1_p=it.newIterator(value2_p['lstaccidents'])
+                            while it.hasNext(iterator1_p):
+                                accident=it.next(iterator1_p)
+                                lt.addLast(lst, accident)
+                    j+=1
+                    suma_j+=1
+                    distance2=distance_between_2_points(longitude, i, longitude, j)
+    size=lt.size(lst)
+    return (lst,size)
+
 
 # ___________________________________________________
 # Funciones de Comparacion

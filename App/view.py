@@ -216,11 +216,12 @@ while True:
                 print('\nLos accidentes ocurridos en esas horas fueron: ', str(size), '.')
                 for categorie in categories:
                     print('\nLa categoria:', str(categorie), ' presenta un total de:', str(categories[categorie]), 'accidentes')
-
+                por=round((size/cont['Number'])*100,2)
+                print('\nEste rango de hora representa el: ', str(por), '% de accidentes totales registrados')
     elif inputs == '8':
         latitude=input('\nIngrese la latitud de las coordenas del centro  de los accidentes:\n>')
         longitude=input('\nIngrese la longitud de las coordenadas del centro de los accidentes :\n>')
-        radio=input('\nIngrese el radio del circulo de los accidentes:\n>')
+        radio=input('\nIngrese el radio del circulo de los accidentes en kilometros:\n>')
         try: 
             ans=controller.findBygeographiczone(cont,latitude,longitude,radio)
         except:
