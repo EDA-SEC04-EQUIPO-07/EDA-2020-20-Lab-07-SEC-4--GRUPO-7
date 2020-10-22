@@ -117,11 +117,9 @@ def findBygeographiczone(analyzer,lat,lng,rad):
     busca todos los accidentes en un area cirular dado un centro y radio 
 
     """
-    try:
-        (lst,size)=model.findBygeographiczone(analyzer,lat,lng,rad)
-        return(lst,size)
-    except:
-        return None
+    (lst,size)=model.findBygeographiczone(analyzer,lat,lng,rad)
+    return(lst,size)
+   
 
 
 # ___________________________________________________

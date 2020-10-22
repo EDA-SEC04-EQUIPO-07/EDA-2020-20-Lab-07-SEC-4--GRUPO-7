@@ -355,12 +355,12 @@ def findBygeographiczone(analyzer,latitude,longitude,radio):
     """
     dada una coordenadas como centro y radio, encuentra todos los accidentes ocurridos en ese radio.
     """
-    mp_latitudes=analyzer['LatitudeIndex']
+    mp_latitudes=analyzer['latitudeIndex']
     lst=lt.newList(datastructure='SINGLE_LINKED')
-    i=latitude
+    i=float(latitude)
     distance=0
     suma_i=0
-    while distance in range(0,radio):
+    while distance in range(0,float(radio)):
         entry1=om.get(mp_latitudes, i)
         if entry1 is None:
             i+=1
@@ -370,9 +370,9 @@ def findBygeographiczone(analyzer,latitude,longitude,radio):
             value1=me.getValue(entry1)
             mp_longitudes=value1['longitudIndex']
             distance2=0
-            j=longitude
+            j=float(longitude)
             suma_j=0
-            while distance2 in range(0,radio):
+            while distance2 in range(0,float(radio)):
                 entry2=om.get(mp_longitudes, j)
                 if entry2 is None:
                     j+=1
@@ -400,7 +400,7 @@ def findBygeographiczone(analyzer,latitude,longitude,radio):
             suma_i+=1
             distance=distance_between_2_points(latitude, i, longitude, longitude)
         if suma_i != 0:
-            i_p=latitude-suma_i
+            i_p=float(latitude)-suma_i
             entry1_p=om.get(mp_latitudes, i_p)
             if entry1_p is not None:
                 value1_p=me.getValue(entry1_p)
@@ -408,7 +408,7 @@ def findBygeographiczone(analyzer,latitude,longitude,radio):
                 distance2=0
                 j=longitude
                 suma_j=0
-                while distance2 in range(0,radio):
+                while distance2 in range(0,float(radio)):
                     entry2=om.get(mp_longitudes, j)
                     if entry2 is None:
                         j+=1
@@ -470,6 +470,9 @@ def cmpLatitude(coordinate1, coordinate2):
     """
     Compara las coordenadas de dos accidentes
     """
+    coordinate1=float(coordinate1)
+    coordinate2=float(coordinate2)
+
     if coordinate1 < coordinate2:
         return -1
     elif coordinate1 == coordinate2:
@@ -480,6 +483,8 @@ def cmpLongitude(coordinate1, coordinate2):
     """
     Compara las coordenadas de dos accidentes
     """
+    coordinate1=float(coordinate1)
+    coordinate2=float(coordinate2)
     if coordinate1 < coordinate2:
         return -1
     elif coordinate1 == coordinate2:
@@ -546,7 +551,7 @@ def countCategories(lst):
         else:
             dic[categorie]=1
     return dic
-def distance_between_2_points(lt1,lt2,ln1,ln2):
+def distance_between_2_points(lt1:float,lt2:float,ln1:float,ln2:float):
     """
     calcula la distancia entre 2 coordenadas, con un radio específico.
     lt1=latititud 1   //coordenadas
@@ -555,10 +560,10 @@ def distance_between_2_points(lt1,lt2,ln1,ln2):
     ln2= longitud 2   //coordenadas
     """
     radio= 6371e3 #radio de la tierra en metros
-    rad1 = lt1 * math.pi/180 
-    rad2 = lt2 * math.pi/180
-    delta1 = (lt2-lt1) * math.pi/180
-    delta2 = (ln2-ln1) * math.pi/180
+    rad1 = float(lt1) * float(math.pi/180) 
+    rad2 = float(lt2) * float(math.pi/180)
+    delta1 = (float(lt2)-float(lt1)) * float(math.pi/180)
+    delta2 = (float(ln2)-float(ln1)) * float(math.pi/180)
     a = math.sin(delta1/2) * math.sin(delta1/2) + math.cos(rad1) * math.cos(rad2) * math.sin(delta2/2) * math.sin(delta2/2)
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
     d= radio*c
