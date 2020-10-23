@@ -242,20 +242,25 @@ def RangeHours(analyzer, hour1, hour2):
     """
     Dadas dos horas busca la cantidad de accidentes que han ocurrido entre esas dos horas.
     """
-    accidents=analyzer['lstaccidents']
-    final_accidents=lt.newList()
-    counter=0
-    iterator2=it.newIterator(accidents)
-    while it.hasNext(iterator2):
-        accident=it.next(iterator2)
-        hour_row=accident['Start_Time']
-        hour=datetime.datetime.strptime(hour_row, '%Y-%m-%d %H:%M:%S')
-        if cmpDates(hour1, hour.time()) == -1:
-            if cmpDates(hour.time(), hour2) == -1:
-                lt.addLast(final_accidents, accident)
-                counter+=1
-    T_categories=countCategories(final_accidents)
-    return (counter,T_categories)
+    try:
+        print(hour1)
+        print(hour2)
+        accidents=analyzer['lstaccidents']
+        final_accidents=lt.newList()
+        counter=0
+        iterator2=it.newIterator(accidents)
+        while it.hasNext(iterator2):
+            accident=it.next(iterator2)
+            hour_row=accident['Start_Time']
+            hour=datetime.datetime.strptime(hour_row, '%Y-%m-%d %H:%M:%S')
+            if cmpDates(hour1, hour.time()) == -1:
+                if cmpDates(hour.time(), hour2) == -1:
+                    lt.addLast(final_accidents, accident)
+                    counter+=1
+        T_categories=countCategories(final_accidents)
+        return (counter,T_categories)
+    except:
+        return None
 
 def findBycoordinates(lst,latitud,longitud,radio):
     """
@@ -365,11 +370,9 @@ def aproxhour(hour):
     try:
         hours=int(hour[:2])
         minutes=int(hour[3:])
-        if minutes in range(0,11):
+        if minutes in range(0,15):
             minutes=00
-        elif minutes in range(10,20):
-            minutes=15
-        elif minutes in range(20,30):
+        elif minutes in range(15,31):
             minutes=30
         else:
             minutes=00

@@ -76,7 +76,7 @@ def printMenu():
     print('5- Conocer los accidentes en un rango de fechas y la categoría de accidentes más reportadas en dicho rango')
     print('6- Conocer la fecha con más accidentes reportados en un rango de fechas.')
     print('7- Busca Todos los accidentes que ocurrieron en cierto rango de horas.')
-    print('8- Conocer la zona geográfica más accidentada')
+    print('8- Conocer los accidentes en una zona geografica.')
     print('0- Salir')
     print("*******************************************")
 
@@ -165,7 +165,7 @@ while True:
                 print('\nLa fecha ingresada no se encuentra dentro del rango de fechas registradas.')
             else:
                 (categoria, size)=ans
-                print('\nLa cantidad de accidentes registrados estre las fechas es: ', str(size), '.')
+                print('\nLa cantidad de accidentes registrados entre las fechas es: ', str(size), '.')
                 print('\nLa categoria con más accidentes registrados fue: ', str(categoria))
     
     elif inputs == '6':
@@ -197,14 +197,12 @@ while True:
     elif inputs == '7':
         print('\nRecuerde el formato para las horas HH:MM')
         hour1_row=input('\nIngrese la hora menor:\n>')
-        hour2_row=input('\nIngrese la hora mayot:\n>')
-        hour1_row=controller.aproxhour(hour1_row)
-        hour2_row=controller.aproxhour(hour2_row)
+        hour2_row=input('\nIngrese la hora mayor:\n>')
         try:
-            hour1_row=controller.aproxhour(hour1_row)
-            hour2_row=controller.aproxhour(hour2_row)
-            hour1=datetime.datetime.strptime(hour1_row, '%H:%M')
-            hour2=datetime.datetime.strptime(hour2_row, '%H:%M')
+            hour1_apo=controller.aproxhour(hour1_row)
+            hour2_apo=controller.aproxhour(hour2_row)
+            hour1=datetime.datetime.strptime(hour1_apo, '%H:%M')
+            hour2=datetime.datetime.strptime(hour2_apo, '%H:%M')
         except:
             hour1=None
             hour2=None
@@ -231,7 +229,7 @@ while True:
         radio=None
         while radio is None:
             try:
-                radio=int(input('\nIngrese el radio del circulo de los accidentes en Metros:\n>'))
+                radio=int(input('\nIngrese el radio del circulo de los accidentes en metros:\n>'))
             except:
                 radio=None
                 print('\nEl radio debe ser un numero y debe estar en metros (m)')
