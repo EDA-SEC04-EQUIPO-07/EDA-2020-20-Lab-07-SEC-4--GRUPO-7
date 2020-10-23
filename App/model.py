@@ -51,14 +51,11 @@ def newAnalaizer():
         -Un ordered map que por llaves tiene las latitudes y longitudes en las que ocurrieron los crimenes.
         -Una lista de crimenes vacia.
     """
-    analyzer={'dateIndex': None, 'latitudeIndex': None, 'Number':0}
-
-    analyzer['lstaccident']=lt.newList(datastructure='SINGLE_LINKED',cmpfunction=cmpIDs )
+    analyzer={'dateIndex': None, 'lstaccidents': None, 'Number':0}
     
     analyzer['dateIndex']=om.newMap(omaptype='RBT',
                                     comparefunction=cmpDates)
-    analyzer['latitudeIndex']=om.newMap(omaptype='RBT',
-                                    comparefunction= cmpLatitude)
+    analyzer['lstaccidents']=lt.newList(datastructure='SINGLE_LINKED')
     return analyzer
 
 # ___________________________________________________
@@ -70,8 +67,7 @@ def addAccident(analyzer, accident):
     Agrega un accidente al mapa de accidentes.
     """
     addNewDate(analyzer, accident)
-    addLatitudIndex(analyzer['latitudeIndex'], accident)
-    analyzer['Number']+=1
+    lt.addLast(analyzer['lstaccidents'], accident)
 
 def addNewDate(analyzer, accident):
     """
@@ -87,47 +83,7 @@ def addNewDate(analyzer, accident):
     else:
         value=me.getValue(entry)
     lt.addLast(value['lstaccident'],accident)
-    addHourIndex(value['hourIndex'], accident, date)
-  
-def addHourIndex(map, accident, date):
-    """
-    Agrega informacion al mapa de Ids.
-    """
-    hour=date.time()
-    entry=om.get(map, hour)
-    if entry is None:
-        value=newHourIndex(hour)
-        om.put(map, hour, value)
-    else:
-        value=me.getValue(entry)
-    lt.addLast(value['lstaccident'],accident)
-
-def addLatitudIndex(map, accident):
-    """
-    Agrega un elemento al mapa de latitudes.
-    """
-    latitud=accident['Start_Lat']
-    entry=om.get(map,latitud)
-    if entry is None:
-        value=newLatitudIndex(latitud)
-        om.put(map, latitud, value)
-    else:
-        value=me.getValue(entry)
-    addLongitudIndex(value['longitudIndex'], accident)
-
-def addLongitudIndex(map, accident):
-    """
-    Agrega un elemento al mapa de las longitudes,
-    """
-    longitud=accident['Start_Lng']
-    entry=om.get(map, longitud)
-    if entry is None:
-        value=newLongitudIndex(longitud)
-        om.put(map, longitud, value)
-    else:
-        value=me.getValue(entry)
-    lt.addLast(value['lstaccidents'],accident)
-
+ 
 # ___________________________________________________
 # Creacion de entradas
 # ___________________________________________________
@@ -136,37 +92,9 @@ def newDateIndex(date):
     """
     Crea la primera capa de informacion en el analyzador.
     """
-    entry={'date':None,'lstaccident': None, 'hourIndex':None}
+    entry={'date':None,'lstaccident': None}
     entry['date']=date
     entry['lstaccident']=lt.newList(datastructure='SINGLE_LINKED', cmpfunction=cmpDates)
-    entry['hourIndex']=om.newMap(omaptype='RBT', comparefunction=cmpDates)
-    return entry
-
-def newHourIndex(hour):
-    """
-    Crea un elmento del arbol que organiza los eventos por hora.
-    """
-    entry={'hour':None, 'lstaccident':None}
-    entry['hour']=hour
-    entry['lstaccident']=lt.newList(datastructure='SINGLE_LINKED', cmpfunction=cmpDates)
-    return entry
-
-def newLatitudIndex(Latitud):
-    """
-    Crea un nuevo elemento del arbol que organiza los accidentes de acurdo a la latitutd.
-    """
-    entry={'latitud':None, 'longitudIndex':None}
-    entry['latitud']=Latitud
-    entry['longitudIndex']=om.newMap(omaptype='RBT',comparefunction=cmpLongitude)
-    return entry
-
-def newLongitudIndex(longitud):
-    """
-    Crea un nuevo elemento en el mapa de las longitudes.
-    """
-    entry={'longitud':None,'lstaccidents':None}
-    entry['longitud']=longitud
-    entry['lstaccidents']=lt.newList()
     return entry
 
 # ___________________________________________________
@@ -178,8 +106,8 @@ def findByday(map,key):
     Busca todas los accidentes que ocurrieron en una fecha específica
     """
     entry=om.get(map, key)
-    value=me.getValue(entry)
     try:
+        value=me.getValue(entry)
         accidents=value['lstaccident']
         categories=countCategories(accidents)
         size=lt.size(accidents)
@@ -314,127 +242,62 @@ def RangeHours(analyzer, hour1, hour2):
     """
     Dadas dos horas busca la cantidad de accidentes que han ocurrido entre esas dos horas.
     """
-    try:
-        dateIndex=analyzer['dateIndex']
-        min_key=om.minKey(dateIndex)
-        max_key=om.maxKey(dateIndex)
-        keys_date=om.keys(dateIndex, min_key,max_key)
-        maps=lt.newList(datastructure='SINGLE_LINKED')
-        iterator1=it.newIterator(keys_date)
-        while it.hasNext(iterator1):
-            key=it.next(iterator1)
-            entry=om.get(dateIndex,key)
-            value=me.getValue(entry)
-            mp=value['hourIndex']
-            lt.addLast(maps, mp)
-        #parte2
-        T_categories={}
-        counter=0
-        iterator2=it.newIterator(maps)
-        while it.hasNext(iterator2):
-            mp=it.next(iterator2)
-            keys_hour=om.keys(mp, hour1, hour2)
-            keysiterator=it.newIterator(keys_hour)
-            while it.hasNext(keysiterator):
+    dateIndex=analyzer['dateIndex']
+    min_key=om.minKey(dateIndex)
+    max_key=om.maxKey(dateIndex)
+    keys_date=om.keys(dateIndex, min_key,max_key)
+    accidents=lt.newList(datastructure='SINGLE_LINKED')
+    iterator1=it.newIterator(keys_date)
+    while it.hasNext(iterator1):
+        key=it.next(iterator1)
+        entry=om.get(dateIndex,key)
+        value=me.getValue(entry)
+        mp=value['lstaccident']
+        iteratormp=it.newIterator(mp)
+        while it.hasNext(iteratormp):
+            accident=it.next(iteratormp)
+            lt.addLast(accidents, accident)
+    #parte2
+    final_accidents=lt.newList()
+    counter=0
+    iterator2=it.newIterator(accidents)
+    while it.hasNext(iterator2):
+        accident=it.next(iterator2)
+        hour_row=accident['Start_Time']
+        hour=datetime.datetime.strptime(hour_row, '%Y-%m-%d %H:%M:%S')
+        if cmpDates(hour1, hour.time()) == -1:
+            if cmpDates(hour.time(), hour2) == -1:
+                lt.addLast(final_accidents, accident)
                 counter+=1
-                entry=om.get(mp, it.next(keysiterator))
-                value=me.getValue(entry)
-                lst=value['lstaccident']
-                categories=countCategories(lst)
-                for categorie in categories:
-                    if categorie in T_categories:
-                        T_categories[categorie]+=categories[categorie]
-                    else:
-                        T_categories[categorie]=categories[categorie]
-        return (counter,T_categories)
+    T_categories=countCategories(final_accidents)
+    return (counter,T_categories)
+
+def findBycoordinates(lst,latitud,longitud,radio):
+    """
+    Busca las accidentes dentro de un radio dadas unas coordenadas.
+    """
+    try:
+        inside=lt.newList()
+        days={}
+        iterator1=it.newIterator(lst)
+        while it.hasNext(iterator1):
+            accident=it.next(iterator1)
+            ac_latitud=accident['Start_Lat']
+            ac_longitud=accident['Start_Lng']
+            if distance_between_2_points(latitud, ac_latitud, longitud, ac_longitud) <= radio:
+                lt.addLast(inside, accident)
+                date_row=datetime.datetime.strptime(accident['Start_Time'], '%Y-%m-%d %H:%M:%S')
+                date=date_row.date()
+                day=date.weekday()
+                if day in days:
+                    days[day]+=1
+                else:
+                    days[day]=1
+        days=day_of_week(days)
+        size=lt.size(inside)
+        return(days, size)
     except:
         return None
-
-
-def findBygeographiczone(analyzer,latitude,longitude,radio):
-    """
-    dada una coordenadas como centro y radio, encuentra todos los accidentes ocurridos en ese radio.
-    """
-    mp_latitudes=analyzer['latitudeIndex']
-    lst=lt.newList(datastructure='SINGLE_LINKED')
-    i=float(latitude)
-    distance=0
-    suma_i=0
-    while distance in range(0,float(radio)):
-        entry1=om.get(mp_latitudes, i)
-        if entry1 is None:
-            i+=1
-            suma_i+=1
-            distance=distance_between_2_points(latitude, i, longitude, longitude)
-        else:
-            value1=me.getValue(entry1)
-            mp_longitudes=value1['longitudIndex']
-            distance2=0
-            j=float(longitude)
-            suma_j=0
-            while distance2 in range(0,float(radio)):
-                entry2=om.get(mp_longitudes, j)
-                if entry2 is None:
-                    j+=1
-                    suma_j+=1
-                    distance2=distance_between_2_points(longitude, i, longitude, j)
-                else:
-                    value2=me.getValue(entry2)
-                    iterator1=it.newIterator(value2['lstaccidents'])
-                    while it.hasNext(iterator1):
-                        accident=it.next(iterator1)
-                        lt.addLast(lst, accident)
-                if suma_j != 0:
-                    j_p=longitude-suma_j
-                    entry2_p=om.get(mp_longitudes, j_p)
-                    if entry2_p is not None:
-                        value2_p=me.getValue(entry2_p)
-                        iterator1_p=it.newIterator(value2_p['lstaccidents'])
-                        while it.hasNext(iterator1_p):
-                            accident=it.next(iterator1_p)
-                            lt.addLast(lst, accident)
-                j+=1
-                suma_j+=1
-                distance2=distance_between_2_points(longitude, i, longitude, j)
-            i+=1
-            suma_i+=1
-            distance=distance_between_2_points(latitude, i, longitude, longitude)
-        if suma_i != 0:
-            i_p=float(latitude)-suma_i
-            entry1_p=om.get(mp_latitudes, i_p)
-            if entry1_p is not None:
-                value1_p=me.getValue(entry1_p)
-                mp_longitudes=value1_p['longitudIndex']
-                distance2=0
-                j=longitude
-                suma_j=0
-                while distance2 in range(0,float(radio)):
-                    entry2=om.get(mp_longitudes, j)
-                    if entry2 is None:
-                        j+=1
-                        suma_j+=1
-                        distance2=distance_between_2_points(longitude, i, longitude, j)
-                    else:
-                        value2=me.getValue(entry2)
-                        iterator1=it.newIterator(value2['lstaccidents'])
-                        while it.hasNext(iterator1):
-                            accident=it.next(iterator1)
-                            lt.addLast(lst, accident)
-                    if suma_j != 0:
-                        j_p=longitude-suma_j
-                        entry2_p=om.get(mp_longitudes, j_p)
-                        if entry2_p is not None:
-                            value2_p=me.getValue(entry2_p)
-                            iterator1_p=it.newIterator(value2_p['lstaccidents'])
-                            while it.hasNext(iterator1_p):
-                                accident=it.next(iterator1_p)
-                                lt.addLast(lst, accident)
-                    j+=1
-                    suma_j+=1
-                    distance2=distance_between_2_points(longitude, i, longitude, j)
-    size=lt.size(lst)
-    return (lst,size)
-
 
 # ___________________________________________________
 # Funciones de Comparacion
@@ -514,25 +377,28 @@ def aproxhour(hour):
     """
     Aproxima los valores de ciertas horas.
     """
-    hours=int(hour[:2])
-    minutes=int(hour[3:])
-    if minutes in range(0,11):
-        minutes=00
-    elif minutes in range(10,20):
-        minutes=15
-    elif minutes in range(20,30):
-        minutes=30
-    else:
-        minutes=00
-        hours+=1
-    minutes=str(minutes)
-    hours=str(hours)
-    if len(minutes) == 1:
-        minutes= '0' + minutes
-    if len(hours) == 1:
-        minutes= '0' + hours
-    hour= hours + ':' +minutes
-    return hour
+    try:
+        hours=int(hour[:2])
+        minutes=int(hour[3:])
+        if minutes in range(0,11):
+            minutes=00
+        elif minutes in range(10,20):
+            minutes=15
+        elif minutes in range(20,30):
+            minutes=30
+        else:
+            minutes=00
+            hours+=1
+        minutes=str(minutes)
+        hours=str(hours)
+        if len(minutes) == 1:
+            minutes= '0' + minutes
+        if len(hours) == 1:
+            minutes= '0' + hours
+        hour= hours + ':' +minutes
+        return hour
+    except:
+        return None
 
 def countCategories(lst):
     """
@@ -568,19 +434,21 @@ def distance_between_2_points(lt1:float,lt2:float,ln1:float,ln2:float):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
     d= radio*c
     return (d)
-def day_of_week(number):
-    if number == 0:
-        day= "Monday"
-    elif number == 1:
-        day== "Tuesday"
-    elif number == 2:
-        day== "Wednesday"
-    elif number == 3:
-        day== "Thursday"
-    elif number == 4:
-        day== "Friday"
-    elif number == 5:
-        day== "Saturday"
-    elif number == 6:
-        day== "Sunday"
-    return(day)
+def day_of_week(dic):
+    days={}
+    for day in dic:
+        if day == 0:
+            days['Lunes']=dic[day]
+        elif day == 1:
+            days['Martes']=dic[day]
+        elif day == 2:
+            days['Miercoles']=dic[day]
+        elif day == 3:
+            days['Jueves']=dic[day]
+        elif day == 4:
+            days['Viernes']=dic[day]
+        elif day == 5:
+            days['Sabado']=dic[day]
+        elif day == 6:
+            days['Domingo']=dic[day]
+    return(days)

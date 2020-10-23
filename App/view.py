@@ -76,7 +76,7 @@ def printMenu():
     print('5- Conocer los accidentes en un rango de fechas y la categoría de accidentes más reportadas en dicho rango')
     print('6- Conocer la fecha con más accidentes reportados en un rango de fechas.')
     print('7- Busca Todos los accidentes que ocurrieron en cierto rango de horas.')
-    print('8-  Conocer la zona geográfica más accidentada')
+    print('8- Conocer la zona geográfica más accidentada')
     print('0- Salir')
     print("*******************************************")
 
@@ -96,7 +96,8 @@ while True:
     elif inputs == '2':
         print("\nCargando información de accidentes ....")
         controller.loadData(cont, file)
-        print(file_heavy)
+        size=lt.size(cont['lstaccidents'])
+        cont['Number']=size
         (high,nodes,min_key,max_key)=controller.infAnalyzer(cont)
         print('\nLa altura del arbol cargado es igual a: ', str(high))
         print('\nLa cantidad de nodos de arbol son: ', str(nodes))
@@ -200,6 +201,8 @@ while True:
         hour1_row=controller.aproxhour(hour1_row)
         hour2_row=controller.aproxhour(hour2_row)
         try:
+            hour1_row=controller.aproxhour(hour1_row)
+            hour2_row=controller.aproxhour(hour2_row)
             hour1=datetime.datetime.strptime(hour1_row, '%H:%M')
             hour2=datetime.datetime.strptime(hour2_row, '%H:%M')
         except:
@@ -219,15 +222,31 @@ while True:
                 por=round((size/cont['Number'])*100,2)
                 print('\nEste rango de hora representa el: ', str(por), '% de accidentes totales registrados')
     elif inputs == '8':
-        latitude=input('\nIngrese la latitud de las coordenas del centro  de los accidentes:\n>')
-        longitude=input('\nIngrese la longitud de las coordenadas del centro de los accidentes :\n>')
-        radio=input('\nIngrese el radio del circulo de los accidentes en kilometros:\n>') 
-        ans=controller.findBygeographiczone(cont,latitude,longitude,radio) 
-        (lst,size)=ans
-        print("los días de la semana son: ")
-        print(lst)
-        print ("el total de datos accidentes que se se encuentan en la zona son: ")
-        print(size)
+        try:
+            latitude=float(input('\nIngrese la latitud de las coordenas del centro  de los accidentes:\n>'))
+            longitude=float(input('\nIngrese la longitud de las coordenadas del centro de los accidentes :\n>'))
+        except:
+            latitude=None
+            longitude=None
+        radio=None
+        while radio is None:
+            try:
+                radio=int(input('\nIngrese el radio del circulo de los accidentes en Metros:\n>'))
+            except:
+                radio=None
+                print('\nEl radio debe ser un numero y debe estar en metros (m)')
+        try:
+            ans=controller.findBygeographiczone(cont,latitude,longitude,radio)
+        except:
+            ans=None
+        if ans is None:
+            print('\n Verifique los formatos ingresados')
+        else:
+            (dic,size)=ans
+            for day in dic:
+                print('\nEl dia de la semana ', day, ' presenta la siguiente cantidad de accidentes: ', str(dic[day]))
+            print ("\nEl total de datos accidentes que se se encuentan en la zona son: ", str(size))
+
 
     elif inputs == '0':
         sys.exit(0)
