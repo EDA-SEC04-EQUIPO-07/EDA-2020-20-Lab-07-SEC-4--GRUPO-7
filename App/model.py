@@ -243,8 +243,6 @@ def RangeHours(analyzer, hour1, hour2):
     Dadas dos horas busca la cantidad de accidentes que han ocurrido entre esas dos horas.
     """
     try:
-        print(hour1)
-        print(hour2)
         accidents=analyzer['lstaccidents']
         final_accidents=lt.newList()
         counter=0
@@ -306,8 +304,6 @@ def cmpIDs(id1,id2):
     else:
         return 1
 
-
-
 def cmpDates(date1, date2):
     """
     Compara la fecha de dos crimenes.
@@ -332,6 +328,7 @@ def cmpLatitude(coordinate1, coordinate2):
         return 0
     else:
         return 1
+
 def cmpLongitude(coordinate1, coordinate2):
     """
     Compara las coordenadas de dos accidentes
@@ -344,7 +341,6 @@ def cmpLongitude(coordinate1, coordinate2):
         return 0
     else:
         return 1
-
 
 def cmpSeverity(accident1,accident2):
     """
@@ -405,6 +401,7 @@ def countCategories(lst):
         else:
             dic[categorie]=1
     return dic
+
 def distance_between_2_points(lt1:float,lt2:float,ln1:float,ln2:float):
     """
     calcula la distancia entre 2 coordenadas, con un radio específico.
@@ -422,6 +419,7 @@ def distance_between_2_points(lt1:float,lt2:float,ln1:float,ln2:float):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
     d= radio*c
     return (d)
+
 def day_of_week(dic):
     days={}
     for day in dic:
