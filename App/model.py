@@ -242,22 +242,7 @@ def RangeHours(analyzer, hour1, hour2):
     """
     Dadas dos horas busca la cantidad de accidentes que han ocurrido entre esas dos horas.
     """
-    dateIndex=analyzer['dateIndex']
-    min_key=om.minKey(dateIndex)
-    max_key=om.maxKey(dateIndex)
-    keys_date=om.keys(dateIndex, min_key,max_key)
-    accidents=lt.newList(datastructure='SINGLE_LINKED')
-    iterator1=it.newIterator(keys_date)
-    while it.hasNext(iterator1):
-        key=it.next(iterator1)
-        entry=om.get(dateIndex,key)
-        value=me.getValue(entry)
-        mp=value['lstaccident']
-        iteratormp=it.newIterator(mp)
-        while it.hasNext(iteratormp):
-            accident=it.next(iteratormp)
-            lt.addLast(accidents, accident)
-    #parte2
+    accidents=analyzer['lstaccidents']
     final_accidents=lt.newList()
     counter=0
     iterator2=it.newIterator(accidents)
